@@ -1,0 +1,5466 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sistema de Ventas - Loterías Mejorado</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<!-- Google API Client -->
+<script src="https://apis.google.com/js/api.js"></script>
+<style>
+:root {
+--primary-color: #0056b3;
+--secondary-color: #6c757d;
+--success-color: #28a745;
+--danger-color: #dc3545;
+--warning-color: #ffc107;
+--info-color: #17a2b8;
+--light-color: #f8f9fa;
+--dark-color: #343a40;
+--bg-gradient-start: #f5f7fa;
+--bg-gradient-end: #c3cfe2;
+--card-shadow: 0 4px 6px rgba(0,0,0,0.1);
+--transition-speed: 0.3s;
+--animation-duration: 0.3s;
+--border-radius: 10px;
+--font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+[data-theme="dark"] {
+--bg-gradient-start: #1a1a2e;
+--bg-gradient-end: #16213e;
+--light-color: #2d3561;
+--dark-color: #f8f9fa;
+--primary-color: #4dabf7;
+--card-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+* {
+box-sizing: border-box;
+}
+
+body {
+font-family: var(--font-family);
+background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+min-height: 100vh;
+color: var(--dark-color);
+transition: background var(--transition-speed);
+padding-bottom: 80px; /* Espacio para el botón flotante */
+}
+
+/* Mejoras de accesibilidad */
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+margin: -1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border-width: 0;
+}
+
+/* Focus mejorado */
+*:focus {
+outline: 2px solid var(--primary-color);
+outline-offset: 2px;
+}
+
+/* Animaciones mejoradas */
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes slideIn {
+from {
+transform: translateX(100%);
+opacity: 0;
+}
+to {
+transform: translateX(0);
+opacity: 1;
+}
+}
+
+@keyframes pulse {
+0% {
+box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+}
+70% {
+box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+}
+100% {
+box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+}
+}
+
+.fade-in {
+animation: fadeIn var(--animation-duration) ease-in;
+}
+
+.slide-up {
+animation: slideUp var(--animation-duration) ease-out;
+}
+
+@keyframes slideUp {
+from {
+transform: translateY(20px);
+opacity: 0;
+}
+to {
+transform: translateY(0);
+opacity: 1;
+}
+}
+
+/* Componentes mejorados */
+.navbar {
+background-color: var(--primary-color);
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+font-weight: bold;
+font-size: 1.5rem;
+display: flex;
+align-items: center;
+}
+
+.card {
+border-radius: var(--border-radius);
+box-shadow: var(--card-shadow);
+margin-bottom: 20px;
+transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+overflow: hidden;
+}
+
+.card:hover {
+transform: translateY(-5px);
+box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.card-header {
+background-color: var(--primary-color);
+color: white;
+font-weight: bold;
+border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.btn {
+border-radius: var(--border-radius);
+transition: all var(--transition-speed);
+}
+
+.btn-primary {
+background-color: var(--primary-color);
+border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+background-color: #004494;
+border-color: #004494;
+transform: translateY(-2px);
+}
+
+.btn-danger {
+background-color: var(--danger-color);
+border-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+background-color: #c82333;
+border-color: #bd2130;
+transform: translateY(-2px);
+}
+
+.btn-warning {
+background-color: var(--warning-color);
+border-color: var(--warning-color);
+}
+
+.btn-warning:hover {
+background-color: #e0a800;
+border-color: #d39e00;
+transform: translateY(-2px);
+}
+
+/* Mejoras en tablas */
+.table {
+background-color: white;
+border-radius: 8px;
+overflow: hidden;
+}
+
+.table th {
+background-color: var(--primary-color);
+color: white;
+position: sticky;
+top: 0;
+z-index: 10;
+}
+
+.table-hover tbody tr:hover {
+background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Mejoras en formularios */
+.form-control:focus, .form-select:focus {
+border-color: var(--primary-color);
+box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* Mejoras en inputs numéricos */
+.numeric-input {
+font-size: 1.2rem;
+text-align: center;
+font-weight: bold;
+letter-spacing: 2px;
+caret-color: var(--primary-color);
+}
+
+.numeric-input:focus {
+background-color: rgba(0, 123, 255, 0.05);
+border-color: var(--primary-color);
+box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* Mejoras en modo móvil */
+@media (max-width: 768px) {
+.numeric-input {
+font-size: 1.5rem;
+padding: 12px;
+}
+.card {
+margin-bottom: 15px;
+}
+.table-responsive {
+font-size: 0.9rem;
+}
+.pale-inputs {
+flex-direction: column;
+}
+.keyboard-shortcuts {
+display: none;
+}
+.numeric-keypad {
+gap: 5px;
+}
+.keypad-btn {
+padding: 12px;
+font-size: 1.1rem;
+}
+}
+
+/* Mejoras en notificaciones */
+.toast-container {
+position: fixed;
+top: 20px;
+right: 20px;
+z-index: 1050;
+}
+
+.toast {
+min-width: 250px;
+animation: slideIn var(--animation-duration) ease-out;
+}
+
+/* Mejoras en modales */
+.modal-header {
+background-color: var(--primary-color);
+color: white;
+}
+
+/* Mejoras en tabs */
+.tab-content {
+padding-top: 20px;
+}
+
+.nav-tabs .nav-link.active {
+background-color: var(--primary-color);
+color: white;
+border-color: var(--primary-color);
+}
+
+/* Mejoras en tarjetas de estadísticas */
+.stats-card {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+border-radius: var(--border-radius);
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: var(--card-shadow);
+transition: all var(--transition-speed);
+}
+
+.stats-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.stats-card h3 {
+font-size: 2rem;
+margin-bottom: 0;
+}
+
+.stats-card p {
+margin-bottom: 0;
+opacity: 0.8;
+}
+
+/* Mejoras en números rápidos */
+.quick-number {
+display: inline-block;
+width: 40px;
+height: 40px;
+line-height: 40px;
+text-align: center;
+background-color: var(--light-color);
+border: 1px solid #ddd;
+border-radius: 5px;
+margin: 5px;
+cursor: pointer;
+transition: all var(--transition-speed);
+}
+
+.quick-number:hover {
+background-color: var(--primary-color);
+color: white;
+transform: scale(1.1);
+}
+
+.quick-number.selected {
+background-color: var(--primary-color);
+color: white;
+}
+
+/* Mejoras en logos de lotería */
+.lottery-logo {
+width: 30px;
+height: 30px;
+margin-right: 10px;
+border-radius: 50%;
+}
+
+/* Mejoras en historial */
+.history-item {
+border-left: 4px solid var(--primary-color);
+padding-left: 15px;
+margin-bottom: 15px;
+transition: all var(--transition-speed);
+}
+
+.history-item:hover {
+background-color: rgba(0, 123, 255, 0.05);
+border-radius: 0 5px 5px 0;
+}
+
+.history-date {
+font-size: 0.9rem;
+color: var(--secondary-color);
+}
+
+.history-total {
+font-weight: bold;
+color: var(--primary-color);
+}
+
+/* Mejoras en configuración */
+.settings-form {
+background-color: white;
+border-radius: 8px;
+padding: 20px;
+box-shadow: var(--card-shadow);
+}
+
+/* Mejoras en spinner */
+.spinner-border {
+width: 1.5rem;
+height: 1.5rem;
+}
+
+/* Mejoras en teclado numérico */
+.numeric-keypad {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 10px;
+margin-top: 10px;
+}
+
+.keypad-btn {
+padding: 15px;
+font-size: 1.2rem;
+font-weight: bold;
+background-color: var(--light-color);
+border: 1px solid #ddd;
+border-radius: 5px;
+cursor: pointer;
+transition: all var(--transition-speed);
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+.keypad-btn:hover {
+background-color: var(--primary-color);
+color: white;
+transform: scale(1.05);
+}
+
+.keypad-btn:active {
+transform: scale(0.95);
+}
+
+.keypad-btn.clear {
+grid-column: span 2;
+background-color: var(--danger-color);
+color: white;
+}
+
+.keypad-btn.enter {
+background-color: var(--success-color);
+color: white;
+}
+
+.keypad-btn.special {
+background-color: var(--warning-color);
+color: white;
+}
+
+.keypad-btn.pulse {
+animation: pulse 0.5s;
+}
+
+/* Mejoras en indicadores de límite */
+.limit-indicator {
+font-size: 0.8rem;
+margin-top: 5px;
+transition: all var(--transition-speed);
+}
+
+.limit-warning {
+color: var(--warning-color);
+}
+
+.limit-danger {
+color: var(--danger-color);
+}
+
+.limit-success {
+color: var(--success-color);
+}
+
+/* Mejoras en toggle de tipo de apuesta */
+.bet-type-toggle {
+display: flex;
+margin-bottom: 10px;
+}
+
+.bet-type-btn {
+flex: 1;
+padding: 8px;
+border: 1px solid #ddd;
+background-color: var(--light-color);
+cursor: pointer;
+text-align: center;
+transition: all var(--transition-speed);
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+.bet-type-btn:first-child {
+border-radius: 5px 0 0 5px;
+}
+
+.bet-type-btn:last-child {
+border-radius: 0 5px 5px 0;
+}
+
+.bet-type-btn.active {
+background-color: var(--primary-color);
+color: white;
+border-color: var(--primary-color);
+}
+
+/* Mejoras en inputs de pale */
+.pale-inputs {
+display: flex;
+gap: 10px;
+}
+
+.pale-inputs .form-control {
+flex: 1;
+}
+
+/* Mejoras en tarjeta de balance */
+.balance-card {
+background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+color: white;
+border-radius: var(--border-radius);
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: var(--card-shadow);
+transition: all var(--transition-speed);
+}
+
+.balance-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.balance-card h3 {
+font-size: 2rem;
+margin-bottom: 0;
+}
+
+.balance-card p {
+margin-bottom: 0;
+opacity: 0.8;
+}
+
+/* Mejoras en botón de tema */
+.theme-toggle {
+position: fixed;
+bottom: 20px;
+right: 20px;
+z-index: 1000;
+}
+
+/* Mejoras en favoritos */
+.favorites-container {
+margin-top: 10px;
+}
+
+.favorite-number {
+display: inline-block;
+padding: 5px 10px;
+margin: 3px;
+background-color: var(--light-color);
+border: 1px solid #ddd;
+border-radius: 15px;
+cursor: pointer;
+transition: all var(--transition-speed);
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+}
+
+.favorite-number:hover {
+background-color: var(--primary-color);
+color: white;
+}
+
+.favorite-number i {
+margin-left: 5px;
+cursor: pointer;
+}
+
+/* Mejoras en búsqueda */
+.search-container {
+position: relative;
+margin-bottom: 15px;
+}
+
+.search-input {
+padding-right: 35px;
+}
+
+.search-icon {
+position: absolute;
+right: 10px;
+top: 50%;
+transform: translateY(-50%);
+color: var(--secondary-color);
+}
+
+/* Mejoras en atajos de teclado */
+.keyboard-shortcuts {
+position: fixed;
+bottom: 20px;
+left: 20px;
+background-color: rgba(255, 255, 255, 0.8);
+padding: 10px;
+border-radius: 5px;
+font-size: 0.8rem;
+box-shadow: var(--card-shadow);
+}
+
+.keyboard-shortcuts h6 {
+margin-bottom: 5px;
+}
+
+.keyboard-shortcuts kbd {
+padding: 2px 5px;
+background-color: var(--light-color);
+border: 1px solid #ddd;
+border-radius: 3px;
+font-family: monospace;
+}
+
+/* Mejoras en barra de progreso */
+.progress-bar-container {
+height: 5px;
+background-color: #e9ecef;
+border-radius: 5px;
+overflow: hidden;
+margin-top: 5px;
+}
+
+.progress-bar {
+height: 100%;
+background-color: var(--primary-color);
+transition: width 0.3s ease;
+}
+
+/* Mejoras en grupo de inputs */
+.input-group-text {
+background-color: var(--light-color);
+border-color: #ced4da;
+}
+
+/* Mejoras en modo de impresión */
+@media print {
+body {
+background: white;
+}
+.navbar, .keyboard-shortcuts, .theme-toggle {
+display: none;
+}
+.card {
+box-shadow: none;
+border: 1px solid #ddd;
+}
+}
+
+/* Mejoras en indicador de método de entrada */
+.input-method-indicator {
+position: absolute;
+right: 10px;
+top: 50%;
+transform: translateY(-50%);
+color: var(--secondary-color);
+font-size: 0.8rem;
+opacity: 0.7;
+}
+
+.input-group {
+position: relative;
+}
+
+/* Mejoras en inputs de valor */
+.value-input {
+text-align: right;
+font-weight: bold;
+}
+
+/* Mejoras en sección de ticket */
+.ticket-section {
+max-height: 300px;
+overflow-y: auto;
+}
+
+.ticket-table {
+font-size: 0.9rem;
+}
+
+.ticket-table th {
+background-color: var(--primary-color);
+color: white;
+position: sticky;
+top: 0;
+z-index: 10;
+}
+
+.ticket-table td {
+vertical-align: middle;
+}
+
+.ticket-table .number-cell {
+font-weight: bold;
+text-align: center;
+}
+
+.ticket-table .lottery-cell {
+text-align: left;
+}
+
+.ticket-table .value-cell {
+text-align: right;
+font-weight: bold;
+}
+
+.ticket-table .action-cell {
+text-align: center;
+}
+
+.ticket-total {
+font-size: 1.2rem;
+font-weight: bold;
+color: var(--primary-color);
+}
+
+.ticket-actions {
+display: flex;
+gap: 5px;
+flex-wrap: wrap;
+}
+
+.ticket-actions .btn {
+padding: 0.25rem 0.5rem;
+font-size: 0.8rem;
+}
+
+/* Mejoras en balance por número y lotería */
+.balance-info {
+font-size: 0.8rem;
+margin-top: 5px;
+}
+
+.balance-available {
+color: var(--success-color);
+}
+
+.balance-warning {
+color: var(--warning-color);
+}
+
+.balance-danger {
+color: var(--danger-color);
+}
+
+/* Mejoras en acciones en historial */
+.history-actions {
+display: flex;
+gap: 5px;
+margin-top: 5px;
+}
+
+.history-actions .btn {
+padding: 0.25rem 0.5rem;
+font-size: 0.8rem;
+}
+
+/* Mejoras en tickets eliminados */
+.deleted-ticket {
+background-color: rgba(220, 53, 69, 0.1);
+border-left-color: var(--danger-color);
+}
+
+.deleted-badge {
+background-color: var(--danger-color);
+color: white;
+padding: 2px 5px;
+border-radius: 3px;
+font-size: 0.7rem;
+margin-left: 5px;
+}
+
+/* Mejoras en autenticación */
+.auth-container {
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+}
+
+.auth-card {
+width: 100%;
+max-width: 400px;
+padding: 30px;
+border-radius: var(--border-radius);
+box-shadow: var(--card-shadow);
+background-color: white;
+}
+
+.auth-logo {
+width: 80px;
+height: 80px;
+margin: 0 auto 20px;
+display: block;
+}
+
+/* Mejoras en notificaciones push */
+.notification-badge {
+position: absolute;
+top: -5px;
+right: -5px;
+background-color: var(--danger-color);
+color: white;
+border-radius: 50%;
+width: 20px;
+height: 20px;
+display: flex;
+justify-content: center;
+align-items: center;
+font-size: 0.7rem;
+}
+
+/* Mejoras en modo offline */
+.offline-indicator {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+background-color: var(--warning-color);
+color: var(--dark-color);
+text-align: center;
+padding: 5px;
+z-index: 2000;
+display: none;
+}
+
+/* Mejoras en copias de seguridad */
+.backup-status {
+position: fixed;
+bottom: 70px;
+right: 20px;
+background-color: var(--success-color);
+color: white;
+padding: 5px 10px;
+border-radius: 5px;
+font-size: 0.8rem;
+opacity: 0;
+transition: opacity var(--transition-speed);
+}
+
+.backup-status.show {
+opacity: 1;
+}
+
+/* Estilos para la sección de configuración protegida */
+.config-protected {
+position: relative;
+min-height: 400px;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.config-locked {
+text-align: center;
+padding: 40px;
+background-color: white;
+border-radius: var(--border-radius);
+box-shadow: var(--card-shadow);
+max-width: 400px;
+}
+
+.config-locked i {
+font-size: 4rem;
+color: var(--primary-color);
+margin-bottom: 20px;
+}
+
+.config-locked h4 {
+margin-bottom: 15px;
+}
+
+.config-locked p {
+margin-bottom: 20px;
+color: var(--secondary-color);
+}
+
+/* Estilos para selección múltiple de loterías */
+.lottery-selection-container {
+position: relative;
+}
+
+.lottery-selection-toggle {
+cursor: pointer;
+}
+
+.lottery-selection-dropdown {
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+background-color: white;
+border: 1px solid #ced4da;
+border-radius: 0.25rem;
+box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+z-index: 1000;
+max-height: 200px;
+overflow-y: auto;
+display: none;
+}
+
+.lottery-selection-dropdown.show {
+display: block;
+}
+
+.lottery-selection-item {
+padding: 0.375rem 0.75rem;
+cursor: pointer;
+}
+
+.lottery-selection-item:hover {
+background-color: #f8f9fa;
+}
+
+.lottery-selection-item.selected {
+background-color: #e9ecef;
+font-weight: bold;
+}
+
+.lottery-selection-item input[type="checkbox"] {
+margin-right: 0.5rem;
+}
+
+.lottery-selection-summary {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0.375rem 0.75rem;
+background-color: #f8f9fa;
+border-bottom: 1px solid #ced4da;
+}
+
+.lottery-selection-summary button {
+font-size: 0.8rem;
+}
+
+.selected-lotteries-display {
+padding: 0.25rem 0.5rem;
+background-color: #e9ecef;
+border-radius: 0.25rem;
+font-size: 0.8rem;
+margin-top: 0.25rem;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+/* Estilos para indicador de lotería cerrada */
+.lottery-closed-indicator {
+color: var(--danger-color);
+font-size: 0.8rem;
+margin-top: 5px;
+}
+
+.lottery-selection-item.closed {
+color: var(--danger-color);
+text-decoration: line-through;
+}
+
+/* Estilos para configuración de loterías */
+.lottery-config-table {
+max-height: 300px;
+overflow-y: auto;
+}
+
+.lottery-config-row {
+display: flex;
+align-items: center;
+padding: 0.5rem 0;
+border-bottom: 1px solid #e9ecef;
+}
+
+.lottery-config-row:last-child {
+border-bottom: none;
+}
+
+.lottery-config-name {
+flex: 2;
+font-weight: 500;
+}
+
+.lottery-config-abbr {
+flex: 1;
+}
+
+.lottery-config-time {
+flex: 1;
+}
+
+.lottery-config-actions {
+flex: 1;
+text-align: right;
+}
+
+/* Estilos para impresión de ticket mejorada */
+.ticket-print-container {
+font-family: 'Courier New', monospace;
+font-size: 30px; /* Tamaño de fuente aumentado de 10px a 30px */
+margin: 0;
+padding: 10px;
+width: 380px;
+}
+
+.ticket-print-header {
+text-align: center;
+margin-bottom: 15px;
+border-bottom: 1px dashed #000;
+padding-bottom: 10px;
+}
+
+.ticket-print-header h1 {
+margin: 0;
+font-size: 36px; /* Tamaño de fuente aumentado */
+}
+
+.ticket-print-header p {
+margin: 3px 0;
+font-size: 24px; /* Tamaño de fuente aumentado */
+}
+
+.ticket-print-info {
+margin-bottom: 10px;
+font-size: 24px; /* Tamaño de fuente aumentado */
+}
+
+.ticket-print-info div {
+margin-bottom: 3px;
+}
+
+.ticket-print-table {
+width: 100%;
+border-collapse: collapse;
+margin-bottom: 10px;
+font-size: 24px; /* Tamaño de fuente aumentado */
+}
+
+.ticket-print-table th {
+text-align: left;
+border-bottom: 1px dashed #000;
+padding: 3px 0;
+}
+
+.ticket-print-table td {
+padding: 3px 0;
+}
+
+.ticket-print-table .number {
+text-align: center;
+font-weight: bold;
+}
+
+.ticket-print-table .lottery {
+text-align: left;
+}
+
+.ticket-print-table .value {
+text-align: right;
+}
+
+.ticket-print-total {
+text-align: right;
+font-weight: bold;
+font-size: 28px; /* Tamaño de fuente aumentado */
+border-top: 1px dashed #000;
+padding-top: 5px;
+margin-top: 5px;
+}
+
+.ticket-print-footer {
+text-align: center;
+margin-top: 15px;
+font-size: 20px; /* Tamaño de fuente aumentado */
+border-top: 1px dashed #000;
+padding-top: 10px;
+}
+
+.ticket-print-abbreviations {
+margin-bottom: 10px;
+font-size: 20px; /* Tamaño de fuente aumentado */
+}
+
+.ticket-print-abbreviations-title {
+font-weight: bold;
+margin-bottom: 5px;
+}
+
+.ticket-print-abbreviation {
+margin-bottom: 2px;
+}
+
+/* Estilos para Google Sheets */
+.google-sheets-status {
+display: flex;
+align-items: center;
+padding: 10px;
+border-radius: 5px;
+margin-bottom: 15px;
+}
+
+.google-sheets-status.connected {
+background-color: rgba(40, 167, 69, 0.1);
+border: 1px solid var(--success-color);
+color: var(--success-color);
+}
+
+.google-sheets-status.disconnected {
+background-color: rgba(220, 53, 69, 0.1);
+border: 1px solid var(--danger-color);
+color: var(--danger-color);
+}
+
+.google-sheets-status i {
+margin-right: 10px;
+font-size: 1.2rem;
+}
+
+.google-sheets-status-text {
+flex: 1;
+}
+
+.google-sheets-status-actions {
+display: flex;
+gap: 5px;
+}
+
+.google-sheets-info {
+background-color: var(--light-color);
+border-radius: 5px;
+padding: 10px;
+margin-bottom: 15px;
+}
+
+.google-sheets-info-item {
+display: flex;
+margin-bottom: 5px;
+}
+
+.google-sheets-info-label {
+font-weight: bold;
+margin-right: 10px;
+min-width: 120px;
+}
+
+.google-sheets-info-value {
+flex: 1;
+}
+
+.google-sheets-sync-status {
+display: flex;
+align-items: center;
+padding: 5px 10px;
+border-radius: 5px;
+margin-top: 10px;
+font-size: 0.8rem;
+}
+
+.google-sheets-sync-status.success {
+background-color: rgba(40, 167, 69, 0.1);
+color: var(--success-color);
+}
+
+.google-sheets-sync-status.error {
+background-color: rgba(220, 53, 69, 0.1);
+color: var(--danger-color);
+}
+
+.google-sheets-sync-status i {
+margin-right: 5px;
+}
+
+.google-sheets-sync-time {
+margin-left: auto;
+}
+
+.google-sheets-logs {
+max-height: 200px;
+overflow-y: auto;
+background-color: var(--light-color);
+border-radius: 5px;
+padding: 10px;
+font-family: monospace;
+font-size: 0.8rem;
+}
+
+.google-sheets-log-item {
+margin-bottom: 5px;
+padding-bottom: 5px;
+border-bottom: 1px solid #ddd;
+}
+
+.google-sheets-log-item:last-child {
+margin-bottom: 0;
+padding-bottom: 0;
+border-bottom: none;
+}
+
+.google-sheets-log-time {
+color: var(--secondary-color);
+margin-right: 10px;
+}
+
+.google-sheets-log-message {
+flex: 1;
+}
+
+.google-sheets-log-error {
+color: var(--danger-color);
+}
+
+.google-sheets-log-success {
+color: var(--success-color);
+}
+
+.google-sheets-log-info {
+color: var(--info-color);
+}
+
+.google-sheets-auth-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 20px;
+border: 2px dashed var(--primary-color);
+border-radius: 5px;
+margin-bottom: 15px;
+}
+
+.google-sheets-auth-icon {
+font-size: 3rem;
+color: var(--primary-color);
+margin-bottom: 15px;
+}
+
+.google-sheets-auth-title {
+font-size: 1.2rem;
+font-weight: bold;
+margin-bottom: 10px;
+}
+
+.google-sheets-auth-description {
+text-align: center;
+margin-bottom: 15px;
+color: var(--secondary-color);
+}
+
+.google-sheets-auth-button {
+background-color: var(--primary-color);
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 5px;
+cursor: pointer;
+transition: all var(--transition-speed);
+}
+
+.google-sheets-auth-button:hover {
+background-color: #004494;
+transform: translateY(-2px);
+}
+
+.google-sheets-spinner {
+display: inline-block;
+width: 1rem;
+height: 1rem;
+border: 2px solid rgba(255, 255, 255, 0.3);
+border-radius: 50%;
+border-top-color: white;
+animation: spin 1s ease-in-out infinite;
+margin-right: 5px;
+}
+
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+<!-- Indicador de modo offline -->
+<div class="offline-indicator" id="offlineIndicator">
+<i class="bi bi-wifi-off me-2"></i>Modo offline - Los cambios se sincronizarán cuando vuelva la conexión
+</div>
+
+<!-- Indicador de estado de copia de seguridad -->
+<div class="backup-status" id="backupStatus">
+<i class="bi bi-cloud-check me-1"></i>Copia de seguridad realizada
+</div>
+
+<!-- Contenedor de autenticación (inicialmente oculto) -->
+<div class="auth-container" id="authContainer" style="display: none;">
+<div class="auth-card">
+<div class="text-center mb-4">
+<img src="https://picsum.photos/seed/lottery-logo/80/80.jpg" alt="Logo" class="auth-logo">
+<h2>Acceso a Configuración</h2>
+<p class="text-muted">Inicie sesión para acceder a la configuración</p>
+</div>
+<form id="loginForm">
+<div class="mb-3">
+<label for="username" class="form-label">Usuario</label>
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-person"></i></span>
+<input type="text" class="form-control" id="username" required>
+</div>
+</div>
+<div class="mb-3">
+<label for="password" class="form-label">Contraseña</label>
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-lock"></i></span>
+<input type="password" class="form-control" id="password" required>
+</div>
+</div>
+<div class="mb-3 form-check">
+<input type="checkbox" class="form-check-input" id="rememberMe">
+<label class="form-check-label" for="rememberMe">Recordarme</label>
+</div>
+<button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+</form>
+<div class="text-center mt-3">
+<a href="#" id="forgotPassword">¿Olvidó su contraseña?</a>
+</div>
+</div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+<div class="container-fluid">
+<a class="navbar-brand" href="#">
+<i class="bi bi-dice-5-fill me-2"></i>
+Sistema de Ventas - Loterías Mejorado
+</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNav">
+<ul class="navbar-nav ms-auto">
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+<i class="bi bi-person-circle me-1"></i> <span id="currentUser">Banca01</span>
+</a>
+<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+<li id="loginMenuItem"><a class="dropdown-item" href="#" id="loginMenuItemLink"><i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión</a></li>
+<li id="profileSettings" style="display: none;"><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Configuración de Perfil</a></li>
+<li id="changePassword" style="display: none;"><a class="dropdown-item" href="#"><i class="bi bi-lock me-2"></i>Cambiar Contraseña</a></li>
+<li id="logoutDivider" style="display: none;"><hr class="dropdown-divider"></li>
+<li id="logout" style="display: none;"><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+</ul>
+</li>
+<li class="nav-item">
+<a class="nav-link position-relative" href="#" id="notificationsToggle">
+<i class="bi bi-bell me-1"></i> Notificaciones
+<span class="notification-badge" id="notificationBadge">3</span>
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link active" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+<i class="bi bi-info-circle me-1"></i> Acerca de
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="#" id="themeToggle">
+<i class="bi bi-moon-stars me-1"></i> Tema
+</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+
+<!-- Main Container -->
+<div class="container mt-4">
+<!-- Stats Cards -->
+<div class="row mb-4 fade-in">
+<div class="col-md-3 col-sm-6">
+<div class="stats-card">
+<h3 id="todaySales">$0.00</h3>
+<p>Ventas de hoy</p>
+<div class="progress-bar-container">
+<div class="progress-bar" id="todaySalesProgress" style="width: 0%"></div>
+</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6">
+<div class="stats-card">
+<h3 id="todayTickets">0</h3>
+<p>Tickets de hoy</p>
+<div class="progress-bar-container">
+<div class="progress-bar" id="todayTicketsProgress" style="width: 0%"></div>
+</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6">
+<div class="stats-card">
+<h3 id="weekSales">$0.00</h3>
+<p>Ventas de la semana</p>
+<div class="progress-bar-container">
+<div class="progress-bar" id="weekSalesProgress" style="width: 0%"></div>
+</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6">
+<div class="stats-card">
+<h3 id="monthSales">$0.00</h3>
+<p>Ventas del mes</p>
+<div class="progress-bar-container">
+<div class="progress-bar" id="monthSalesProgress" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Tabs Navigation -->
+<ul class="nav nav-tabs" id="mainTabs" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active" id="vender-tab" data-bs-toggle="tab" data-bs-target="#vender" type="button" role="tab">
+<i class="bi bi-cart-plus me-1"></i> Vender
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="historial-tab" data-bs-toggle="tab" data-bs-target="#historial" type="button" role="tab">
+<i class="bi bi-clock-history me-1"></i> Historial
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="cuadre-tab" data-bs-toggle="tab" data-bs-target="#cuadre" type="button" role="tab">
+<i class="bi bi-calculator me-1"></i> Cuadre
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="estadisticas-tab" data-bs-toggle="tab" data-bs-target="#estadisticas" type="button" role="tab">
+<i class="bi bi-graph-up me-1"></i> Estadísticas
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="configuracion-tab" data-bs-toggle="tab" data-bs-target="#configuracion" type="button" role="tab">
+<i class="bi bi-gear me-1"></i> Configuración
+<i class="bi bi-lock-fill ms-1" id="configLockIcon"></i>
+</button>
+</li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="mainTabContent">
+<!-- Vender Tab -->
+<div class="tab-pane fade show active" id="vender" role="tabpanel">
+<div class="card slide-up">
+<div class="card-header">
+<h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Nueva Jugada</h5>
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="soundToggle" checked>
+<label class="form-check-label text-white" for="soundToggle">
+Sonido
+</label>
+</div>
+</div>
+<div class="card-body">
+<div class="row g-3">
+<div class="col-md-3">
+<label for="bet_type" class="form-label">Tipo de Jugada</label>
+<div class="bet-type-toggle">
+<div class="bet-type-btn active" data-type="simple">Simple</div>
+<div class="bet-type-btn" data-type="pale">Pale</div>
+</div>
+</div>
+</div>
+
+<div class="row g-3 mt-1">
+<div class="col-md-3">
+<label for="n_numero" class="form-label">Número (1 a 2 dígitos)</label>
+<div id="simple_number_input">
+<div class="input-group">
+<input type="tel" class="form-control numeric-input" id="n_numero" maxlength="2" placeholder="00" 
+inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+<span class="input-method-indicator">
+<i class="bi bi-keyboard"></i>
+</span>
+</div>
+<div id="number_limit_indicator" class="limit-indicator"></div>
+</div>
+<div id="pale_number_input" style="display: none;">
+<div class="pale-inputs">
+<div class="input-group">
+<input type="tel" class="form-control numeric-input" id="n_numero1" maxlength="2" placeholder="00" 
+inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+<span class="input-method-indicator">
+<i class="bi bi-keyboard"></i>
+</span>
+</div>
+<div class="input-group">
+<input type="tel" class="form-control numeric-input" id="n_numero2" maxlength="2" placeholder="00" 
+inputmode="numeric" pattern="[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+<span class="input-method-indicator">
+<i class="bi bi-keyboard"></i>
+</span>
+</div>
+</div>
+<div id="pale_limit_indicator" class="limit-indicator"></div>
+</div>
+<div class="mt-2">
+<small class="text-muted">Teclado numérico:</small>
+<div id="quickNumbers" class="numeric-keypad">
+<button class="keypad-btn" data-value="1">1</button>
+<button class="keypad-btn" data-value="2">2</button>
+<button class="keypad-btn" data-value="3">3</button>
+<button class="keypad-btn" data-value="4">4</button>
+<button class="keypad-btn" data-value="5">5</button>
+<button class="keypad-btn" data-value="6">6</button>
+<button class="keypad-btn" data-value="7">7</button>
+<button class="keypad-btn" data-value="8">8</button>
+<button class="keypad-btn" data-value="9">9</button>
+<button class="keypad-btn clear" data-action="clear">Limpiar</button>
+<button class="keypad-btn" data-value="0">0</button>
+<button class="keypad-btn enter" data-action="enter">Enter</button>
+</div>
+</div>
+<div class="favorites-container">
+<small class="text-muted">Favoritos:</small>
+<div id="favoritesList">
+<!-- Favorites will be populated by JS -->
+</div>
+</div>
+</div>
+<div class="col-md-4">
+<label for="n_loteria" class="form-label">Lotería</label>
+<div class="lottery-selection-container">
+<div class="form-select lottery-selection-toggle" id="n_loteria_toggle">
+<div class="d-flex justify-content-between align-items-center">
+<span id="selected_loteria_text">Seleccionar lotería</span>
+<i class="bi bi-chevron-down"></i>
+</div>
+</div>
+<div class="lottery-selection-dropdown" id="lottery_dropdown">
+<div class="lottery-selection-summary">
+<span>Seleccionar todas</span>
+<button type="button" class="btn btn-sm btn-outline-primary" id="select_all_loterias">Todas</button>
+</div>
+<div id="lottery_checkboxes">
+<!-- Checkboxes will be populated by JS -->
+</div>
+</div>
+<div class="selected-lotteries-display" id="selected_loterias_display">
+<!-- Selected lotteries will be displayed here -->
+</div>
+<div id="lottery_closed_indicator" class="lottery-closed-indicator"></div>
+</div>
+</div>
+<div class="col-md-2">
+<label for="n_valor" class="form-label">Valor</label>
+<div class="input-group">
+<span class="input-group-text">$</span>
+<input type="tel" class="form-control value-input" id="n_valor" min="0" step="0.01" value="1" 
+inputmode="decimal" pattern="[0-9]*\.?[0-9]*" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+</div>
+</div>
+<div class="col-md-3 d-flex align-items-end">
+<button class="btn btn-primary w-100" id="add_entry">
+<i class="bi bi-plus-circle me-1"></i> Agregar a ticket
+</button>
+</div>
+</div>
+
+<!-- Ticket Actual Integrado -->
+<div class="row mt-3">
+<div class="col-12">
+<div class="card">
+<div class="card-header py-2">
+<h6 class="mb-0"><i class="bi bi-receipt me-2"></i>Ticket Actual</h6>
+</div>
+<div class="card-body py-2">
+<div class="ticket-section">
+<table class="table table-sm ticket-table" id="entries_table">
+<thead>
+<tr>
+<th class="number-cell">Número</th>
+<th class="lottery-cell">Lotería</th>
+<th class="value-cell">Valor</th>
+<th class="action-cell">Acción</th>
+</tr>
+</thead>
+<tbody>
+<!-- Entries will be populated by JS -->
+</tbody>
+</table>
+</div>
+<div class="d-flex justify-content-between align-items-center mt-2">
+<div>
+<span class="ticket-total">Total: $<span id="current_total">0.00</span></span>
+</div>
+<div>
+<span class="badge bg-primary" id="entries_count">0 jugadas</span>
+</div>
+</div>
+<div class="ticket-actions mt-2">
+<button class="btn btn-success" id="finalize_ticket">
+<i class="bi bi-check-circle me-1"></i> Guardar ticket (Imprimir)
+</button>
+<button class="btn btn-danger" id="clear_entries">
+<i class="bi bi-trash me-1"></i> Limpiar
+</button>
+<button class="btn btn-secondary" id="save_draft">
+<i class="bi bi-save me-1"></i> Guardar borrador
+</button>
+<button class="btn btn-info" id="load_draft">
+<i class="bi bi-folder-open me-1"></i> Cargar borrador
+</button>
+<button class="btn btn-warning" id="add_to_favorites">
+<i class="bi bi-star me-1"></i> Agregar a favoritos
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Historial Tab -->
+<div class="tab-pane fade" id="historial" role="tabpanel">
+<div class="card slide-up">
+<div class="card-header d-flex justify-content-between align-items-center">
+<h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Historial de Ventas</h5>
+<div>
+<button class="btn btn-sm btn-outline-primary" id="refresh_history">
+<i class="bi bi-arrow-clockwise me-1"></i> Actualizar
+</button>
+<button class="btn btn-sm btn-outline-success" id="export_history">
+<i class="bi bi-download me-1"></i> Exportar
+</button>
+</div>
+</div>
+<div class="card-body">
+<div class="row mb-3">
+<div class="col-md-4">
+<label for="filter_date" class="form-label">Filtrar por fecha</label>
+<input type="date" class="form-control" id="filter_date">
+</div>
+<div class="col-md-4">
+<label for="filter_loteria" class="form-label">Filtrar por lotería</label>
+<select class="form-select" id="filter_loteria">
+<option value="">Todas las loterías</option>
+<!-- Options will be populated by JS -->
+</select>
+</div>
+<div class="col-md-4 d-flex align-items-end">
+<button class="btn btn-primary w-100" id="apply_filter">
+<i class="bi bi-funnel me-1"></i> Aplicar filtros
+</button>
+</div>
+</div>
+
+<div class="search-container mb-3">
+<input type="text" class="form-control search-input" id="historySearch" placeholder="Buscar en historial...">
+<i class="bi bi-search search-icon"></i>
+</div>
+
+<div id="history_list">
+<!-- History items will be populated by JS -->
+</div>
+</div>
+</div>
+</div>
+
+<!-- Cuadre Tab -->
+<div class="tab-pane fade" id="cuadre" role="tabpanel">
+<div class="card slide-up">
+<div class="card-header d-flex justify-content-between align-items-center">
+<h5 class="mb-0"><i class="bi bi-calculator me-2"></i>Cuadre de Ventas</h5>
+<div>
+<button class="btn btn-sm btn-outline-primary" id="refresh_balance">
+<i class="bi bi-arrow-clockwise me-1"></i> Actualizar
+</button>
+<button class="btn btn-sm btn-outline-success" id="export_balance">
+<i class="bi bi-download me-1"></i> Exportar
+</button>
+</div>
+</div>
+<div class="card-body">
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="balance_start_date" class="form-label">Fecha de inicio</label>
+<input type="date" class="form-control" id="balance_start_date">
+</div>
+<div class="col-md-6">
+<label for="balance_end_date" class="form-label">Fecha de fin</label>
+<input type="date" class="form-control" id="balance_end_date">
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12 d-flex align-items-end">
+<button class="btn btn-primary w-100" id="calculate_balance">
+<i class="bi bi-calculator me-1"></i> Calcular Cuadre
+</button>
+</div>
+</div>
+
+<div class="row">
+<div class="col-md-4">
+<div class="balance-card">
+<h3 id="balance_total">$0.00</h3>
+<p>Total de Ventas</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="balance-card">
+<h3 id="balance_tickets">0</h3>
+<p>Total de Tickets</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="balance-card">
+<h3 id="balance_deleted">0</h3>
+<p>Tickets Eliminados</p>
+</div>
+</div>
+</div>
+
+<div class="card mt-4">
+<div class="card-header">
+<h5 class="mb-0"><i class="bi bi-calendar3 me-2"></i>Resumen por Día</h5>
+</div>
+<div class="card-body">
+<div class="table-responsive">
+<table class="table table-hover" id="balance_table">
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Ventas</th>
+<th>Tickets</th>
+<th>Tickets Eliminados</th>
+</tr>
+</thead>
+<tbody>
+<!-- Balance items will be populated by JS -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Estadísticas Tab -->
+<div class="tab-pane fade" id="estadisticas" role="tabpanel">
+<div class="card slide-up">
+<div class="card-header">
+<h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Estadísticas de Ventas</h5>
+</div>
+<div class="card-body">
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="stats_period" class="form-label">Período</label>
+<select class="form-select" id="stats_period">
+<option value="today">Hoy</option>
+<option value="week">Esta semana</option>
+<option value="month">Este mes</option>
+<option value="year">Este año</option>
+<option value="custom">Personalizado</option>
+</select>
+</div>
+<div class="col-md-6" id="custom_dates" style="display: none;">
+<label for="stats_custom_date" class="form-label">Fecha</label>
+<input type="date" class="form-control" id="stats_custom_date">
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<button class="btn btn-primary w-100" id="generate_stats">
+<i class="bi bi-bar-chart me-1"></i> Generar Estadísticas
+</button>
+</div>
+</div>
+
+<div class="row">
+<div class="col-md-6">
+<div class="card">
+<div class="card-header">
+<h6 class="mb-0">Números más vendidos</h6>
+</div>
+<div class="card-body">
+<div id="top_numbers">
+<!-- Top numbers will be populated by JS -->
+</div>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="card">
+<div class="card-header">
+<h6 class="mb-0">Loterías más populares</h6>
+</div>
+<div class="card-body">
+<div id="top_loterias">
+<!-- Top loterias will be populated by JS -->
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card mt-4">
+<div class="card-header">
+<h6 class="mb-0">Gráfico de Ventas</h6>
+</div>
+<div class="card-body">
+<canvas id="salesChart" width="400" height="200"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Configuración Tab (Protegida) -->
+<div class="tab-pane fade" id="configuracion" role="tabpanel">
+<div id="configProtectedContent" class="config-protected">
+<div class="config-locked">
+<i class="bi bi-lock-fill"></i>
+<h4>Acceso Restringido</h4>
+<p>Esta sección requiere autenticación para acceder.</p>
+<button class="btn btn-primary" id="loginFromConfig">
+<i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+</button>
+</div>
+</div>
+
+<div id="configContent" style="display: none;">
+<div class="card slide-up">
+<div class="card-header">
+<h5 class="mb-0"><i class="bi bi-gear me-2"></i>Configuración del Sistema</h5>
+</div>
+<div class="card-body">
+<ul class="nav nav-tabs" id="configTabs" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active" id="general-config-tab" data-bs-toggle="tab" data-bs-target="#general-config" type="button" role="tab">
+General
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="lotteries-config-tab" data-bs-toggle="tab" data-bs-target="#lotteries-config" type="button" role="tab">
+Loterías
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="google-sheets-config-tab" data-bs-toggle="tab" data-bs-target="#google-sheets-config" type="button" role="tab">
+Google Sheets
+</button>
+</li>
+</ul>
+<div class="tab-content" id="configTabContent">
+<div class="tab-pane fade show active" id="general-config" role="tabpanel">
+<form class="settings-form">
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="shop_name" class="form-label">Nombre del Negocio</label>
+<input type="text" class="form-control" id="shop_name" value="Mi Lotería">
+</div>
+<div class="col-md-6">
+<label for="shop_address" class="form-label">Dirección</label>
+<input type="text" class="form-control" id="shop_address" value="Calle Principal #123">
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="shop_phone" class="form-label">Teléfono</label>
+<input type="tel" class="form-control" id="shop_phone" value="(809) 123-4567">
+</div>
+<div class="col-md-6">
+<label for="shop_rnc" class="form-label">RNC</label>
+<input type="text" class="form-control" id="shop_rnc" value="123456789">
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="default_value" class="form-label">Valor por Defecto</label>
+<div class="input-group">
+<span class="input-group-text">$</span>
+<input type="tel" class="form-control" id="default_value" min="0" step="0.01" value="1" 
+inputmode="decimal" pattern="[0-9]*\.?[0-9]*">
+</div>
+</div>
+<div class="col-md-6">
+<label for="max_bet_amount" class="form-label">Monto Máximo por Número y Lotería</label>
+<div class="input-group">
+<span class="input-group-text">$</span>
+<input type="tel" class="form-control" id="max_bet_amount" min="0" step="0.01" value="30" 
+inputmode="decimal" pattern="[0-9]*\.?[0-9]*">
+</div>
+<small class="text-muted">Límite máximo que se puede apostar a un mismo número en cada lotería</small>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="printer_type" class="form-label">Tipo de Impresora</label>
+<select class="form-select" id="printer_type">
+<option value="thermal">Térmica</option>
+<option value="standard">Estándar</option>
+<option value="pdf">PDF</option>
+</select>
+</div>
+<div class="col-md-6">
+<label for="max_pale_amount" class="form-label">Monto Máximo por Pale y Lotería</label>
+<div class="input-group">
+<span class="input-group-text">$</span>
+<input type="tel" class="form-control" id="max_pale_amount" min="0" step="0.01" value="30" 
+inputmode="decimal" pattern="[0-9]*\.?[0-9]*">
+</div>
+<small class="text-muted">Límite máximo que se puede apostar a un mismo pale en cada lotería</small>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="ticket_font_size" class="form-label">Tamaño de Fuente del Ticket</label>
+<select class="form-select" id="ticket_font_size">
+<option value="20">Pequeño (20px)</option>
+<option value="24">Mediano (24px)</option>
+<option value="30" selected>Grande (30px)</option>
+<option value="36">Muy Grande (36px)</option>
+</select>
+</div>
+<div class="col-md-6">
+<label for="ticket_format" class="form-label">Formato de Ticket</label>
+<select class="form-select" id="ticket_format">
+<option value="standard">Estándar</option>
+<option value="abbreviated" selected>Con Abreviaturas</option>
+</select>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="auto_print" checked>
+<label class="form-check-label" for="auto_print">
+Imprimir ticket automáticamente después de guardarlo
+</label>
+</div>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="sound_notifications" checked>
+<label class="form-check-label" for="sound_notifications">
+Activar notificaciones de sonido
+</label>
+</div>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="dark_mode">
+<label class="form-check-label" for="dark_mode">
+Modo oscuro
+</label>
+</div>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="enable_keypad" checked>
+<label class="form-check-label" for="enable_keypad">
+Mostrar teclado virtual en pantalla
+</label>
+</div>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="auto_backup" checked>
+<label class="form-check-label" for="auto_backup">
+Realizar copias de seguridad automáticas
+</label>
+</div>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="enable_notifications" checked>
+<label class="form-check-label" for="enable_notifications">
+Activar notificaciones push
+</label>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-md-12">
+<button type="button" class="btn btn-primary" id="save_settings">
+<i class="bi bi-save me-1"></i> Guardar Configuración
+</button>
+<button type="button" class="btn btn-secondary ms-2" id="reset_settings">
+<i class="bi bi-arrow-clockwise me-1"></i> Restablecer Valores
+</button>
+<button type="button" class="btn btn-warning ms-2" id="backup_now">
+<i class="bi bi-cloud-upload me-1"></i> Realizar Copia de Seguridad
+</button>
+<button type="button" class="btn btn-danger ms-2" id="clear_all_data">
+<i class="bi bi-exclamation-triangle me-1"></i> Limpiar Todos los Datos
+</button>
+</div>
+</div>
+</form>
+</div>
+<div class="tab-pane fade" id="lotteries-config" role="tabpanel">
+<div class="card">
+<div class="card-header">
+<h5 class="mb-0">Configuración de Loterías</h5>
+</div>
+<div class="card-body">
+<div class="lottery-config-table" id="lottery_config_table">
+<!-- Lottery config rows will be populated by JS -->
+</div>
+</div>
+</div>
+</div>
+<div class="tab-pane fade" id="google-sheets-config" role="tabpanel">
+<div class="card">
+<div class="card-header">
+<h5 class="mb-0">Configuración de Google Sheets</h5>
+</div>
+<div class="card-body">
+<div id="googleSheetsAuthContainer" class="google-sheets-auth-container">
+<i class="bi bi-google google-sheets-auth-icon"></i>
+<h5 class="google-sheets-auth-title">Conectar con Google Sheets</h5>
+<p class="google-sheets-auth-description">Conecta tu cuenta de Google para sincronizar tus datos con Google Sheets. Cada banca tendrá su propia hoja de cálculo.</p>
+<button id="googleAuthBtn" class="google-sheets-auth-button">
+<i class="bi bi-google me-2"></i>Conectar con Google
+</button>
+</div>
+
+<div id="googleSheetsConfigContainer" style="display: none;">
+<div class="google-sheets-status" id="googleSheetsStatus">
+<i class="bi bi-check-circle-fill"></i>
+<div class="google-sheets-status-text">
+Conectado a Google Sheets
+</div>
+<div class="google-sheets-status-actions">
+<button class="btn btn-sm btn-outline-danger" id="disconnectGoogleSheets">
+<i class="bi bi-x-circle me-1"></i> Desconectar
+</button>
+</div>
+</div>
+
+<div class="google-sheets-info">
+<div class="google-sheets-info-item">
+<div class="google-sheets-info-label">Usuario:</div>
+<div class="google-sheets-info-value" id="googleSheetsUser">-</div>
+</div>
+<div class="google-sheets-info-item">
+<div class="google-sheets-info-label">ID de Cliente:</div>
+<div class="google-sheets-info-value" id="googleSheetsClientId">-</div>
+</div>
+<div class="google-sheets-info-item">
+<div class="google-sheets-info-label">Hoja de Cálculo:</div>
+<div class="google-sheets-info-value" id="googleSheetsSpreadsheet">-</div>
+</div>
+<div class="google-sheets-info-item">
+<div class="google-sheets-info-label">ID de Hoja:</div>
+<div class="google-sheets-info-value" id="googleSheetsSpreadsheetId">-</div>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<div class="form-check form-switch">
+<input class="form-check-input" type="checkbox" id="auto_sync_google_sheets" checked>
+<label class="form-check-label" for="auto_sync_google_sheets">
+Sincronización automática con Google Sheets
+</label>
+</div>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-6">
+<label for="sync_interval" class="form-label">Intervalo de Sincronización</label>
+<select class="form-select" id="sync_interval">
+<option value="5">Cada 5 minutos</option>
+<option value="15" selected>Cada 15 minutos</option>
+<option value="30">Cada 30 minutos</option>
+<option value="60">Cada hora</option>
+</select>
+</div>
+<div class="col-md-6">
+<label for="sync_on_save" class="form-label">Sincronizar al guardar</label>
+<select class="form-select" id="sync_on_save">
+<option value="immediately" selected>Inmediatamente</option>
+<option value="delayed">Con retraso (5 minutos)</option>
+<option value="manual">Solo manualmente</option>
+</select>
+</div>
+</div>
+
+<div class="row mb-3">
+<div class="col-md-12">
+<button class="btn btn-primary" id="createNewSpreadsheet">
+<i class="bi bi-file-earmark-plus me-1"></i> Crear Nueva Hoja de Cálculo
+</button>
+<button class="btn btn-outline-primary ms-2" id="selectExistingSpreadsheet">
+<i class="bi bi-folder-open me-1"></i> Seleccionar Hoja Existente
+</button>
+<button class="btn btn-success ms-2" id="syncNow">
+<i class="bi bi-arrow-repeat me-1"></i> Sincronizar Ahora
+</button>
+</div>
+</div>
+
+<div class="google-sheets-sync-status" id="googleSheetsSyncStatus">
+<i class="bi bi-check-circle-fill"></i>
+<span>Última sincronización: <span id="lastSyncTime">Nunca</span></span>
+</div>
+
+<div class="card mt-3">
+<div class="card-header">
+<h6 class="mb-0">Registro de Sincronización</h6>
+</div>
+<div class="card-body">
+<div class="google-sheets-logs" id="googleSheetsLogs">
+<!-- Logs will be populated by JS -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container">
+<!-- Toasts will be dynamically added here -->
+</div>
+
+<!-- About Modal -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="aboutModalLabel">Acerca de Sistema de Ventas - Loterías Mejorado</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="text-center mb-3">
+<i class="bi bi-dice-5-fill" style="font-size: 3rem; color: var(--primary-color);"></i>
+</div>
+<p><strong>Versión:</strong> 3.0 Mejorada</p>
+<p><strong>Descripción:</strong> Sistema de ventas de loterías con límites específicos por número/lotería y pale/lotería.</p>
+<p><strong>Características principales:</strong></p>
+<ul>
+<li>Gestión de tickets de lotería</li>
+<li>Soporte para jugadas simples y pales</li>
+<li>Control de límites de apuesta por número y lotería</li>
+<li>Control de límites de apuesta por pale y lotería</li>
+<li>Historial de ventas con filtros y búsqueda</li>
+<li>Funciones de copiar y eliminar tickets</li>
+<li>Cuadre de ventas con conteo de tickets eliminados</li>
+<li>Estadísticas detalladas de ventas</li>
+<li>Configuración personalizable (protegida)</li>
+<li>Impresión de tickets</li>
+<li>Modo oscuro/claro</li>
+<li>Números favoritos</li>
+<li>Atajos de teclado</li>
+<li>Soporte completo para teclado numérico</li>
+<li>Copias de seguridad automáticas</li>
+<li>Notificaciones push</li>
+<li>Modo offline con sincronización</li>
+<li>Selección múltiple de loterías</li>
+<li>Abreviaturas personalizadas para loterías</li>
+<li>Horarios de cierre por lotería</li>
+<li>Restablecimiento diario de límites de apuesta</li>
+<li>Sincronización con Google Sheets</li>
+</ul>
+<p class="text-center mt-3">© 2023 - Todos los derechos reservados</p>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal-dialog modal-sm modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-body text-center">
+<div class="spinner-border text-primary mb-3" role="status">
+<span class="visually-hidden">Cargando...</span>
+</div>
+<p>Procesando...</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Google Sheets Modal -->
+<div class="modal fade" id="googleSheetsModal" tabindex="-1" aria-labelledby="googleSheetsModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="googleSheetsModalLabel">Seleccionar Hoja de Cálculo</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="mb-3">
+<label for="spreadsheetName" class="form-label">Nombre de la Hoja de Cálculo</label>
+<input type="text" class="form-control" id="spreadsheetName" placeholder="Mi Banca - Ventas">
+<small class="text-muted">Se creará una nueva hoja de cálculo con este nombre en tu cuenta de Google Drive.</small>
+</div>
+<div class="mb-3">
+<label for="spreadsheetFolder" class="form-label">Carpeta (opcional)</label>
+<input type="text" class="form-control" id="spreadsheetFolder" placeholder="Loterías">
+<small class="text-muted">Si la carpeta no existe, se creará automáticamente.</small>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+<button type="button" class="btn btn-primary" id="createSpreadsheetBtn">Crear Hoja de Cálculo</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Keyboard Shortcuts Modal -->
+<div class="modal fade" id="shortcutsModal" tabindex="-1" aria-labelledby="shortcutsModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="shortcutsModalLabel">Atajos de Teclado</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<tbody>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>N</kbd></td>
+<td>Nueva jugada</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+<td>Guardar ticket</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>D</kbd></td>
+<td>Guardar borrador</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>L</kbd></td>
+<td>Cargar borrador</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>Delete</kbd></td>
+<td>Limpiar ticket</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>F</kbd></td>
+<td>Buscar</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>P</kbd></td>
+<td>Imprimir</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>T</kbd></td>
+<td>Cambiar tema</td>
+</tr>
+<tr>
+<td><kbd>Ctrl</kbd> + <kbd>B</kbd></td>
+<td>Realizar copia de seguridad</td>
+</tr>
+<tr>
+<td><kbd>F1</kbd></td>
+<td>Ayuda</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Theme Toggle Button -->
+<button class="btn btn-primary theme-toggle rounded-circle" id="themeToggleBtn">
+<i class="bi bi-moon-stars-fill"></i>
+</button>
+
+<!-- Keyboard Shortcuts Indicator -->
+<div class="keyboard-shortcuts">
+<h6>Atajos:</h6>
+<div><kbd>Ctrl</kbd>+<kbd>N</kbd> Nueva jugada</div>
+<div><kbd>Ctrl</kbd>+<kbd>S</kbd> Guardar</div>
+<div><kbd>F1</kbd> Ayuda</div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Constants
+const LOTERIAS = [
+'NACIONAL NOCHE', 'NACIONAL MD', 'LEIDSA', 'REAL', 'LOTEKA',
+'NEW YORK TARDE', 'NEW YORK NOCHE', 'PRIMERA 12 PM', 'FLORIDA AM',
+'FLORIDA PM', 'LA SUERTE', 'LOTEDOM', 'ANGILA 1 PM', 'ANGILA 6 PM',
+'ANGILA 9 PM', 'ANGILA 10 AM', 'PRIMERA 8 PM', 'LA SUERTE 6 PM'
+];
+
+// Default abbreviations for lotteries
+const DEFAULT_ABBREVIATIONS = {
+'NACIONAL NOCHE': 'N',
+'NACIONAL MD': 'MD',
+'LEIDSA': 'L',
+'REAL': 'R',
+'LOTEKA': 'K',
+'NEW YORK TARDE': 'NYT',
+'NEW YORK NOCHE': 'NYN',
+'PRIMERA 12 PM': '12',
+'FLORIDA AM': 'FA',
+'FLORIDA PM': 'FP',
+'LA SUERTE': 'S',
+'LOTEDOM': 'D',
+'ANGILA 1 PM': 'A1',
+'ANGILA 6 PM': 'A6',
+'ANGILA 9 PM': 'A9',
+'ANGILA 10 AM': 'A10',
+'PRIMERA 8 PM': '8',
+'LA SUERTE 6 PM': 'S6'
+};
+
+// Default closing times for lotteries (HH:MM format)
+const DEFAULT_CLOSING_TIMES = {
+'NACIONAL NOCHE': '20:00',
+'NACIONAL MD': '12:30',
+'LEIDSA': '20:00',
+'REAL': '20:00',
+'LOTEKA': '20:00',
+'NEW YORK TARDE': '14:00',
+'NEW YORK NOCHE': '20:00',
+'PRIMERA 12 PM': '12:00',
+'FLORIDA AM': '12:00',
+'FLORIDA PM': '18:00',
+'LA SUERTE': '17:00',
+'LOTEDOM': '20:00',
+'ANGILA 1 PM': '13:00',
+'ANGILA 6 PM': '18:00',
+'ANGILA 9 PM': '21:00',
+'ANGILA 10 AM': '10:00',
+'PRIMERA 8 PM': '20:00',
+'LA SUERTE 6 PM': '18:00'
+};
+
+// Google Sheets API Configuration
+const GOOGLE_SHEETS_API_KEY = 'AIzaSyBFiMnkB-ehrg8PTt8hu2vtezdi2j4Amko'; // Reemplazar con tu clave de API
+const GOOGLE_SHEETS_CLIENT_ID = '151843469519-h40sbhpc16sttlea2jim377o7k9ketnk.apps.googleusercontent.com'; // Reemplazar con tu ID de cliente
+const GOOGLE_SHEETS_DISCOVERY_DOCS = ['https://sheets.googleapis.com/$discovery/rest?version=v4'];
+const GOOGLE_SHEETS_SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+
+// State
+let currentEntries = [];
+let salesHistory = [];
+let deletedTickets = [];
+let betType = 'simple'; // 'simple' or 'pale'
+let numberLimits = {}; // Track betting limits for each number and lottery
+let paleLimits = {}; // Track betting limits for each pale combination and lottery
+let favorites = []; // Favorite numbers
+let salesChart = null; // Chart instance
+let soundEnabled = true;
+let keypadEnabled = true;
+let isAuthenticated = false;
+let currentUser = null;
+let notifications = [];
+let isOnline = navigator.onLine;
+let selectedLoterias = []; // Array to store selected loterias
+let lotteryAbbreviations = { ...DEFAULT_ABBREVIATIONS }; // Store abbreviations for lotteries
+let lotteryClosingTimes = { ...DEFAULT_CLOSING_TIMES }; // Store closing times for loterias
+let lastResetDate = null; // Track the last date limits were reset
+let settings = {
+shopName: 'Mi Lotería',
+shopAddress: 'Calle Principal #123',
+shopPhone: '(809) 123-4567',
+shopRNC: '123456789',
+defaultValue: 1,
+printerType: 'thermal',
+autoPrint: true,
+soundNotifications: true,
+maxBetAmount: 30,
+maxPaleAmount: 30,
+darkMode: false,
+enableKeypad: true,
+autoBackup: true,
+enableNotifications: true,
+ticketFontSize: 30, // Default font size for ticket
+ticketFormat: 'abbreviated', // Default ticket format
+autoSyncGoogleSheets: true,
+syncInterval: 15, // minutes
+syncOnSave: 'immediately'
+};
+
+// Google Sheets State
+let googleSheetsConnected = false;
+let googleSheetsTokenClient = null;
+let googleSheetsSpreadsheetId = null;
+let googleSheetsSpreadsheetName = null;
+let googleSheetsUser = null;
+let googleSheetsClientId = null;
+let googleSheetsApiKey = null;
+let googleSheetsSyncInterval = null;
+let googleSheetsLastSyncTime = null;
+let googleSheetsSyncLogs = [];
+
+// DOM Elements Cache
+const elements = {
+// Vender tab
+nNumero: document.getElementById('n_numero'),
+nNumero1: document.getElementById('n_numero1'),
+nNumero2: document.getElementById('n_numero2'),
+nLoteriaToggle: document.getElementById('n_loteria_toggle'),
+lotteryDropdown: document.getElementById('lottery_dropdown'),
+lotteryCheckboxes: document.getElementById('lottery_checkboxes'),
+selectedLoteriaText: document.getElementById('selected_loteria_text'),
+selectedLoteriasDisplay: document.getElementById('selected_loterias_display'),
+selectAllLoterias: document.getElementById('select_all_loterias'),
+lotteryClosedIndicator: document.getElementById('lottery_closed_indicator'),
+nValor: document.getElementById('n_valor'),
+entriesTable: document.querySelector('#entries_table tbody'),
+currentTotal: document.getElementById('current_total'),
+entriesCount: document.getElementById('entries_count'),
+quickNumbers: document.getElementById('quickNumbers'),
+simpleNumberInput: document.getElementById('simple_number_input'),
+paleNumberInput: document.getElementById('pale_number_input'),
+numberLimitIndicator: document.getElementById('number_limit_indicator'),
+paleLimitIndicator: document.getElementById('pale_limit_indicator'),
+favoritesList: document.getElementById('favoritesList'),
+addToFavorites: document.getElementById('add_to_favorites'),
+
+// Historial tab
+filterDate: document.getElementById('filter_date'),
+filterLoteria: document.getElementById('filter_loteria'),
+historyList: document.getElementById('history_list'),
+historySearch: document.getElementById('historySearch'),
+
+// Cuadre tab
+balanceStartDate: document.getElementById('balance_start_date'),
+balanceEndDate: document.getElementById('balance_end_date'),
+balanceTotal: document.getElementById('balance_total'),
+balanceTickets: document.getElementById('balance_tickets'),
+balanceDeleted: document.getElementById('balance_deleted'),
+balanceTable: document.querySelector('#balance_table tbody'),
+
+// Estadísticas tab
+statsPeriod: document.getElementById('stats_period'),
+customDates: document.getElementById('custom_dates'),
+statsCustomDate: document.getElementById('stats_custom_date'),
+topNumbers: document.getElementById('top_numbers'),
+topLoterias: document.getElementById('top_loterias'),
+salesChart: document.getElementById('salesChart'),
+
+// Configuración tab
+shopName: document.getElementById('shop_name'),
+shopAddress: document.getElementById('shop_address'),
+shopPhone: document.getElementById('shop_phone'),
+shopRnc: document.getElementById('shop_rnc'),
+defaultValue: document.getElementById('default_value'),
+printerType: document.getElementById('printer_type'),
+autoPrint: document.getElementById('auto_print'),
+soundNotifications: document.getElementById('sound_notifications'),
+maxBetAmount: document.getElementById('max_bet_amount'),
+maxPaleAmount: document.getElementById('max_pale_amount'),
+darkMode: document.getElementById('dark_mode'),
+enableKeypad: document.getElementById('enable_keypad'),
+autoBackup: document.getElementById('auto_backup'),
+enableNotifications: document.getElementById('enable_notifications'),
+ticketFontSize: document.getElementById('ticket_font_size'),
+ticketFormat: document.getElementById('ticket_format'),
+lotteryConfigTable: document.getElementById('lottery_config_table'),
+
+// Google Sheets tab
+googleSheetsAuthContainer: document.getElementById('googleSheetsAuthContainer'),
+googleSheetsConfigContainer: document.getElementById('googleSheetsConfigContainer'),
+googleSheetsStatus: document.getElementById('googleSheetsStatus'),
+googleSheetsUser: document.getElementById('googleSheetsUser'),
+googleSheetsClientId: document.getElementById('googleSheetsClientId'),
+googleSheetsSpreadsheet: document.getElementById('googleSheetsSpreadsheet'),
+googleSheetsSpreadsheetId: document.getElementById('googleSheetsSpreadsheetId'),
+autoSyncGoogleSheets: document.getElementById('auto_sync_google_sheets'),
+syncInterval: document.getElementById('sync_interval'),
+syncOnSave: document.getElementById('sync_on_save'),
+googleSheetsSyncStatus: document.getElementById('googleSheetsSyncStatus'),
+lastSyncTime: document.getElementById('lastSyncTime'),
+googleSheetsLogs: document.getElementById('googleSheetsLogs'),
+
+// General
+todaySales: document.getElementById('todaySales'),
+todayTickets: document.getElementById('todayTickets'),
+weekSales: document.getElementById('weekSales'),
+monthSales: document.getElementById('monthSales'),
+soundToggle: document.getElementById('soundToggle'),
+themeToggleBtn: document.getElementById('themeToggleBtn'),
+offlineIndicator: document.getElementById('offlineIndicator'),
+backupStatus: document.getElementById('backupStatus'),
+notificationBadge: document.getElementById('notificationBadge'),
+currentUser: document.getElementById('currentUser'),
+authContainer: document.getElementById('authContainer'),
+configProtectedContent: document.getElementById('configProtectedContent'),
+configContent: document.getElementById('configContent'),
+configLockIcon: document.getElementById('configLockIcon'),
+loginMenuItem: document.getElementById('loginMenuItem'),
+loginMenuItemLink: document.getElementById('loginMenuItemLink'),
+profileSettings: document.getElementById('profileSettings'),
+changePassword: document.getElementById('changePassword'),
+logoutDivider: document.getElementById('logoutDivider'),
+logout: document.getElementById('logout')
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+// Check authentication status
+checkAuthentication();
+
+// Initialize components
+initializeLoterias();
+initializeKeypad();
+initializeBetTypeToggle();
+initializeTheme();
+initializeKeyboardShortcuts();
+initializeNumericInputs();
+initializeOnlineStatus();
+initializeNotifications();
+initializeLotterySelection();
+initializeLotteryConfig();
+initializeGoogleSheets();
+
+// Load data
+loadSettings();
+loadNumberLimits();
+loadSalesHistory();
+loadDeletedTickets();
+loadFavorites();
+loadLotteryConfig();
+loadGoogleSheetsConfig();
+
+// Set today's date as default filter
+const today = new Date();
+elements.filterDate.value = formatDateForInput(today);
+
+// Set default dates for balance (last 7 days)
+const endDate = new Date();
+const startDate = new Date();
+startDate.setDate(endDate.getDate() - 7);
+elements.balanceStartDate.value = formatDateForInput(startDate);
+elements.balanceEndDate.value = formatDateForInput(endDate);
+
+// Event Listeners
+document.getElementById('add_entry').addEventListener('click', addEntry);
+document.getElementById('finalize_ticket').addEventListener('click', finalizeTicket);
+document.getElementById('clear_entries').addEventListener('click', clearEntries);
+document.getElementById('save_draft').addEventListener('click', saveDraft);
+document.getElementById('load_draft').addEventListener('click', loadDraft);
+document.getElementById('refresh_history').addEventListener('click', loadSalesHistory);
+document.getElementById('export_history').addEventListener('click', exportHistory);
+document.getElementById('apply_filter').addEventListener('click', applyFilters);
+document.getElementById('save_settings').addEventListener('click', saveSettings);
+document.getElementById('reset_settings').addEventListener('click', resetSettings);
+document.getElementById('clear_all_data').addEventListener('click', clearAllData);
+document.getElementById('refresh_balance').addEventListener('click', calculateBalance);
+document.getElementById('export_balance').addEventListener('click', exportBalance);
+document.getElementById('calculate_balance').addEventListener('click', calculateBalance);
+document.getElementById('generate_stats').addEventListener('click', generateStats);
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+elements.themeToggleBtn.addEventListener('click', toggleTheme);
+elements.soundToggle.addEventListener('change', toggleSound);
+elements.darkMode.addEventListener('change', toggleDarkMode);
+elements.enableKeypad.addEventListener('change', toggleKeypad);
+elements.ticketFontSize.addEventListener('change', updateTicketFontSize);
+elements.ticketFormat.addEventListener('change', updateTicketFormat);
+elements.statsPeriod.addEventListener('change', toggleStatsPeriod);
+elements.historySearch.addEventListener('input', debounce(filterHistoryEntries, 300));
+elements.addToFavorites.addEventListener('click', addToFavorites);
+
+// Authentication event listeners
+document.getElementById('loginForm').addEventListener('submit', handleLogin);
+elements.loginMenuItemLink.addEventListener('click', showLoginForm);
+document.getElementById('loginFromConfig').addEventListener('click', showLoginForm);
+elements.logout.addEventListener('click', handleLogout);
+document.getElementById('forgotPassword').addEventListener('click', handleForgotPassword);
+
+// Config tab protection
+document.getElementById('configuracion-tab').addEventListener('click', handleConfigTabClick);
+
+// Backup event listeners
+document.getElementById('backup_now').addEventListener('click', performBackup);
+
+// Google Sheets event listeners
+document.getElementById('googleAuthBtn').addEventListener('click', handleGoogleAuth);
+document.getElementById('disconnectGoogleSheets').addEventListener('click', disconnectGoogleSheets);
+document.getElementById('createNewSpreadsheet').addEventListener('click', showCreateSpreadsheetModal);
+document.getElementById('selectExistingSpreadsheet').addEventListener('click', selectExistingSpreadsheet);
+document.getElementById('syncNow').addEventListener('click', syncWithGoogleSheets);
+document.getElementById('createSpreadsheetBtn').addEventListener('click', createSpreadsheet);
+elements.autoSyncGoogleSheets.addEventListener('change', toggleAutoSyncGoogleSheets);
+elements.syncInterval.addEventListener('change', updateSyncInterval);
+elements.syncOnSave.addEventListener('change', updateSyncOnSave);
+
+// Update limit indicators when value changes
+elements.nValor.addEventListener('input', updateLimitIndicators);
+
+// Auto backup
+if (settings.autoBackup) {
+scheduleAutoBackup();
+}
+
+// Check for closed lotteries every minute
+setInterval(checkClosedLotteries, 60000);
+checkClosedLotteries(); // Check immediately on load
+
+// Check if we need to reset daily limits (check at startup and then every hour)
+checkAndResetDailyLimits();
+setInterval(checkAndResetDailyLimits, 3600000); // Check every hour
+
+// Initialize app without requiring authentication
+updateStats();
+renderEntries();
+});
+
+// Google Sheets Functions
+function initializeGoogleSheets() {
+// Check if already connected
+if (localStorage.getItem('googleSheetsToken')) {
+googleSheetsConnected = true;
+updateGoogleSheetsUI();
+}
+}
+
+function loadGoogleSheetsConfig() {
+// Load from localStorage
+const token = localStorage.getItem('googleSheetsToken');
+const spreadsheetId = localStorage.getItem('googleSheetsSpreadsheetId');
+const spreadsheetName = localStorage.getItem('googleSheetsSpreadsheetName');
+const user = localStorage.getItem('googleSheetsUser');
+const clientId = localStorage.getItem('googleSheetsClientId');
+const apiKey = localStorage.getItem('googleSheetsApiKey');
+const lastSyncTime = localStorage.getItem('googleSheetsLastSyncTime');
+const logs = localStorage.getItem('googleSheetsSyncLogs');
+
+if (token) {
+googleSheetsConnected = true;
+}
+
+if (spreadsheetId) {
+googleSheetsSpreadsheetId = spreadsheetId;
+}
+
+if (spreadsheetName) {
+googleSheetsSpreadsheetName = spreadsheetName;
+}
+
+if (user) {
+googleSheetsUser = user;
+}
+
+if (clientId) {
+googleSheetsClientId = clientId;
+}
+
+if (apiKey) {
+googleSheetsApiKey = apiKey;
+}
+
+if (lastSyncTime) {
+googleSheetsLastSyncTime = new Date(lastSyncTime);
+}
+
+if (logs) {
+googleSheetsSyncLogs = JSON.parse(logs);
+}
+
+// Update UI
+updateGoogleSheetsUI();
+
+// Set up auto sync if enabled
+if (settings.autoSyncGoogleSheets && googleSheetsConnected) {
+setupGoogleSheetsAutoSync();
+}
+}
+
+function saveGoogleSheetsConfig() {
+// Save to localStorage
+if (googleSheetsConnected) {
+localStorage.setItem('googleSheetsToken', 'connected'); // In a real app, this would be the actual token
+}
+
+if (googleSheetsSpreadsheetId) {
+localStorage.setItem('googleSheetsSpreadsheetId', googleSheetsSpreadsheetId);
+}
+
+if (googleSheetsSpreadsheetName) {
+localStorage.setItem('googleSheetsSpreadsheetName', googleSheetsSpreadsheetName);
+}
+
+if (googleSheetsUser) {
+localStorage.setItem('googleSheetsUser', googleSheetsUser);
+}
+
+if (googleSheetsClientId) {
+localStorage.setItem('googleSheetsClientId', googleSheetsClientId);
+}
+
+if (googleSheetsApiKey) {
+localStorage.setItem('googleSheetsApiKey', googleSheetsApiKey);
+}
+
+if (googleSheetsLastSyncTime) {
+localStorage.setItem('googleSheetsLastSyncTime', googleSheetsLastSyncTime.toISOString());
+}
+
+if (googleSheetsSyncLogs.length > 0) {
+localStorage.setItem('googleSheetsSyncLogs', JSON.stringify(googleSheetsSyncLogs));
+}
+}
+
+function updateGoogleSheetsUI() {
+if (googleSheetsConnected) {
+elements.googleSheetsAuthContainer.style.display = 'none';
+elements.googleSheetsConfigContainer.style.display = 'block';
+
+// Update status
+elements.googleSheetsStatus.className = 'google-sheets-status connected';
+elements.googleSheetsStatus.innerHTML = `
+<i class="bi bi-check-circle-fill"></i>
+<div class="google-sheets-status-text">
+Conectado a Google Sheets
+</div>
+<div class="google-sheets-status-actions">
+<button class="btn btn-sm btn-outline-danger" id="disconnectGoogleSheets">
+<i class="bi bi-x-circle me-1"></i> Desconectar
+</button>
+</div>
+`;
+
+// Update info
+elements.googleSheetsUser.textContent = googleSheetsUser || 'Usuario';
+elements.googleSheetsClientId.textContent = googleSheetsClientId || 'ID de Cliente';
+elements.googleSheetsSpreadsheet.textContent = googleSheetsSpreadsheetName || 'Hoja de Cálculo';
+elements.googleSheetsSpreadsheetId.textContent = googleSheetsSpreadsheetId || 'ID de Hoja';
+
+// Update last sync time
+if (googleSheetsLastSyncTime) {
+elements.lastSyncTime.textContent = formatDateTime(googleSheetsLastSyncTime);
+}
+
+// Update sync status
+updateGoogleSheetsSyncStatus();
+
+// Update logs
+renderGoogleSheetsLogs();
+
+// Re-attach event listeners
+document.getElementById('disconnectGoogleSheets').addEventListener('click', disconnectGoogleSheets);
+} else {
+elements.googleSheetsAuthContainer.style.display = 'block';
+elements.googleSheetsConfigContainer.style.display = 'none';
+}
+}
+
+function handleGoogleAuth() {
+// In a real implementation, this would use the Google API client library
+// For this demo, we'll simulate the authentication process
+showToast('Conectando con Google...', 'info');
+
+// Simulate authentication delay
+setTimeout(() => {
+// Simulate successful authentication
+googleSheetsConnected = true;
+googleSheetsUser = 'usuario@example.com';
+googleSheetsClientId = '1234567890-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com';
+googleSheetsApiKey = GOOGLE_SHEETS_API_KEY;
+
+// Save config
+saveGoogleSheetsConfig();
+
+// Update UI
+updateGoogleSheetsUI();
+
+// Show success message
+showToast('Conectado exitosamente a Google Sheets', 'success');
+
+// Add log entry
+addGoogleSheetsLog('info', 'Conectado a Google Sheets');
+}, 2000);
+}
+
+function disconnectGoogleSheets() {
+if (confirm('¿Está seguro de que desea desconectarse de Google Sheets? Los datos locales no se eliminarán.')) {
+// Clear connection
+googleSheetsConnected = false;
+googleSheetsTokenClient = null;
+googleSheetsSpreadsheetId = null;
+googleSheetsSpreadsheetName = null;
+googleSheetsUser = null;
+googleSheetsClientId = null;
+googleSheetsApiKey = null;
+googleSheetsLastSyncTime = null;
+
+// Clear auto sync
+if (googleSheetsSyncInterval) {
+clearInterval(googleSheetsSyncInterval);
+googleSheetsSyncInterval = null;
+}
+
+// Clear localStorage
+localStorage.removeItem('googleSheetsToken');
+localStorage.removeItem('googleSheetsSpreadsheetId');
+localStorage.removeItem('googleSheetsSpreadsheetName');
+localStorage.removeItem('googleSheetsUser');
+localStorage.removeItem('googleSheetsClientId');
+localStorage.removeItem('googleSheetsApiKey');
+localStorage.removeItem('googleSheetsLastSyncTime');
+
+// Update UI
+updateGoogleSheetsUI();
+
+// Show message
+showToast('Desconectado de Google Sheets', 'info');
+}
+}
+
+function showCreateSpreadsheetModal() {
+const modal = new bootstrap.Modal(document.getElementById('googleSheetsModal'));
+modal.show();
+}
+
+function createSpreadsheet() {
+const name = document.getElementById('spreadsheetName').value;
+const folder = document.getElementById('spreadsheetFolder').value;
+
+if (!name) {
+showToast('Por favor ingrese un nombre para la hoja de cálculo', 'warning');
+return;
+}
+
+// Close modal
+bootstrap.Modal.getInstance(document.getElementById('googleSheetsModal')).hide();
+
+// Show loading
+showToast('Creando hoja de cálculo...', 'info');
+
+// Simulate API call
+setTimeout(() => {
+// Simulate successful creation
+googleSheetsSpreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'; // Example ID
+googleSheetsSpreadsheetName = name;
+
+// Save config
+saveGoogleSheetsConfig();
+
+// Update UI
+updateGoogleSheetsUI();
+
+// Show success message
+showToast(`Hoja de cálculo "${name}" creada exitosamente`, 'success');
+
+// Add log entry
+addGoogleSheetsLog('success', `Hoja de cálculo "${name}" creada`);
+
+// Initialize sheet with headers
+initializeGoogleSheetsSheet();
+}, 2000);
+}
+
+function selectExistingSpreadsheet() {
+// In a real implementation, this would open a file picker or show a list of spreadsheets
+// For this demo, we'll simulate selecting an existing spreadsheet
+showToast('Seleccionando hoja de cálculo existente...', 'info');
+
+// Simulate API call
+setTimeout(() => {
+// Simulate successful selection
+googleSheetsSpreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'; // Example ID
+googleSheetsSpreadsheetName = 'Mi Banca - Ventas';
+
+// Save config
+saveGoogleSheetsConfig();
+
+// Update UI
+updateGoogleSheetsUI();
+
+// Show success message
+showToast(`Hoja de cálculo "${googleSheetsSpreadsheetName}" seleccionada exitosamente`, 'success');
+
+// Add log entry
+addGoogleSheetsLog('info', `Hoja de cálculo "${googleSheetsSpreadsheetName}" seleccionada`);
+}, 2000);
+}
+
+function initializeGoogleSheetsSheet() {
+// In a real implementation, this would create the sheet with the proper headers
+// For this demo, we'll just log the action
+addGoogleSheetsLog('info', 'Inicializando hoja de cálculo con encabezados');
+
+// Simulate API call
+setTimeout(() => {
+addGoogleSheetsLog('success', 'Hoja de cálculo inicializada con encabezados');
+}, 1000);
+}
+
+function syncWithGoogleSheets() {
+if (!googleSheetsConnected || !googleSheetsSpreadsheetId) {
+showToast('No está conectado a Google Sheets o no ha seleccionado una hoja de cálculo', 'warning');
+return;
+}
+
+// Show loading
+showToast('Sincronizando con Google Sheets...', 'info');
+
+// Add log entry
+addGoogleSheetsLog('info', 'Iniciando sincronización con Google Sheets');
+
+// Simulate API call
+setTimeout(() => {
+// Simulate successful sync
+googleSheetsLastSyncTime = new Date();
+
+// Save config
+saveGoogleSheetsConfig();
+
+// Update UI
+updateGoogleSheetsUI();
+
+// Show success message
+showToast('Sincronización completada exitosamente', 'success');
+
+// Add log entry
+addGoogleSheetsLog('success', 'Sincronización completada');
+}, 2000);
+}
+
+function setupGoogleSheetsAutoSync() {
+// Clear existing interval
+if (googleSheetsSyncInterval) {
+clearInterval(googleSheetsSyncInterval);
+}
+
+// Set up new interval
+const intervalMs = settings.syncInterval * 60 * 1000; // Convert minutes to milliseconds
+googleSheetsSyncInterval = setInterval(() => {
+if (settings.autoSyncGoogleSheets && googleSheetsConnected) {
+syncWithGoogleSheets();
+}
+}, intervalMs);
+
+// Add log entry
+addGoogleSheetsLog('info', `Sincronización automática configurada cada ${settings.syncInterval} minutos`);
+}
+
+function toggleAutoSyncGoogleSheets() {
+settings.autoSyncGoogleSheets = elements.autoSyncGoogleSheets.checked;
+saveSettings();
+
+if (settings.autoSyncGoogleSheets && googleSheetsConnected) {
+setupGoogleSheetsAutoSync();
+showToast('Sincronización automática activada', 'success');
+} else {
+if (googleSheetsSyncInterval) {
+clearInterval(googleSheetsSyncInterval);
+googleSheetsSyncInterval = null;
+}
+showToast('Sincronización automática desactivada', 'info');
+}
+}
+
+function updateSyncInterval() {
+settings.syncInterval = parseInt(elements.syncInterval.value);
+saveSettings();
+
+if (settings.autoSyncGoogleSheets && googleSheetsConnected) {
+setupGoogleSheetsAutoSync();
+showToast(`Intervalo de sincronización actualizado a ${settings.syncInterval} minutos`, 'info');
+}
+}
+
+function updateSyncOnSave() {
+settings.syncOnSave = elements.syncOnSave.value;
+saveSettings();
+showToast('Configuración de sincronización al guardar actualizada', 'info');
+}
+
+function updateGoogleSheetsSyncStatus() {
+const statusElement = elements.googleSheetsSyncStatus;
+
+if (googleSheetsLastSyncTime) {
+statusElement.className = 'google-sheets-sync-status success';
+statusElement.innerHTML = `
+<i class="bi bi-check-circle-fill"></i>
+<span>Última sincronización: <span id="lastSyncTime">${formatDateTime(googleSheetsLastSyncTime)}</span></span>
+`;
+} else {
+statusElement.className = 'google-sheets-sync-status error';
+statusElement.innerHTML = `
+<i class="bi bi-x-circle-fill"></i>
+<span>No se ha sincronizado aún</span>
+`;
+}
+}
+
+function addGoogleSheetsLog(type, message) {
+const logEntry = {
+timestamp: new Date(),
+type,
+message
+};
+
+googleSheetsSyncLogs.unshift(logEntry);
+
+// Keep only the last 50 logs
+if (googleSheetsSyncLogs.length > 50) {
+googleSheetsSyncLogs = googleSheetsSyncLogs.slice(0, 50);
+}
+
+// Save logs
+saveGoogleSheetsConfig();
+
+// Update UI
+renderGoogleSheetsLogs();
+}
+
+function renderGoogleSheetsLogs() {
+elements.googleSheetsLogs.innerHTML = '';
+
+if (googleSheetsSyncLogs.length === 0) {
+elements.googleSheetsLogs.innerHTML = '<div class="text-muted">No hay registros de sincronización</div>';
+return;
+}
+
+googleSheetsSyncLogs.forEach(log => {
+const logElement = document.createElement('div');
+logElement.className = 'google-sheets-log-item';
+
+const timeElement = document.createElement('span');
+timeElement.className = 'google-sheets-log-time';
+timeElement.textContent = formatTime(log.timestamp);
+
+const messageElement = document.createElement('span');
+messageElement.className = `google-sheets-log-${log.type}`;
+messageElement.textContent = log.message;
+
+logElement.appendChild(timeElement);
+logElement.appendChild(messageElement);
+
+elements.googleSheetsLogs.appendChild(logElement);
+});
+}
+
+function formatDateTime(date) {
+return `${formatDate(date)} ${formatTime(date)}`;
+}
+
+// Authentication Functions
+function checkAuthentication() {
+const savedUser = localStorage.getItem('currentUser');
+if (savedUser) {
+currentUser = JSON.parse(savedUser);
+isAuthenticated = true;
+updateAuthUI();
+}
+}
+
+function updateAuthUI() {
+if (isAuthenticated && currentUser) {
+elements.currentUser.textContent = currentUser.username;
+elements.loginMenuItem.style.display = 'none';
+elements.profileSettings.style.display = 'block';
+elements.changePassword.style.display = 'block';
+elements.logoutDivider.style.display = 'block';
+elements.logout.style.display = 'block';
+elements.configLockIcon.style.display = 'none';
+} else {
+elements.currentUser.textContent = 'Banca01';
+elements.loginMenuItem.style.display = 'block';
+elements.profileSettings.style.display = 'none';
+elements.changePassword.style.display = 'none';
+elements.logoutDivider.style.display = 'none';
+elements.logout.style.display = 'none';
+elements.configLockIcon.style.display = 'inline';
+}
+}
+
+function showLoginForm(e) {
+if (e) e.preventDefault();
+elements.authContainer.style.display = 'flex';
+}
+
+function hideLoginForm() {
+elements.authContainer.style.display = 'none';
+}
+
+function handleConfigTabClick(e) {
+if (!isAuthenticated) {
+e.preventDefault();
+showLoginForm();
+showToast('Debe iniciar sesión para acceder a la configuración', 'warning');
+return false;
+}
+}
+
+function handleLogin(e) {
+e.preventDefault();
+const username = document.getElementById('username').value;
+const password = document.getElementById('password').value;
+const rememberMe = document.getElementById('rememberMe').checked;
+
+// Simulate authentication (in a real app, this would be an API call)
+if (username === 'admin' && password === 'admin') {
+isAuthenticated = true;
+currentUser = { username, role: 'admin' };
+updateAuthUI();
+hideLoginForm();
+
+if (rememberMe) {
+localStorage.setItem('currentUser', JSON.stringify(currentUser));
+}
+
+showToast('Inicio de sesión exitoso', 'success');
+
+// If user was trying to access config, show it now
+const configTab = document.getElementById('configuracion-tab');
+const configPane = document.getElementById('configuracion');
+if (configTab.classList.contains('active')) {
+showConfigContent();
+}
+} else {
+showToast('Usuario o contraseña incorrectos', 'danger');
+}
+}
+
+function handleLogout() {
+isAuthenticated = false;
+localStorage.removeItem('currentUser');
+currentUser = null;
+updateAuthUI();
+hideLoginForm();
+showConfigProtected();
+showToast('Sesión cerrada correctamente', 'info');
+}
+
+function handleForgotPassword(e) {
+e.preventDefault();
+showToast('Se ha enviado un correo de recuperación a su dirección de email', 'info');
+}
+
+function showConfigContent() {
+elements.configProtectedContent.style.display = 'none';
+elements.configContent.style.display = 'block';
+}
+
+function showConfigProtected() {
+elements.configProtectedContent.style.display = 'flex';
+elements.configContent.style.display = 'none';
+}
+
+// Online/Offline Status Functions
+function initializeOnlineStatus() {
+window.addEventListener('online', () => {
+isOnline = true;
+elements.offlineIndicator.style.display = 'none';
+showToast('Conexión restablecida', 'success');
+syncData();
+});
+
+window.addEventListener('offline', () => {
+isOnline = false;
+elements.offlineIndicator.style.display = 'block';
+showToast('Modo offline activado', 'warning');
+});
+}
+
+function syncData() {
+if (!isOnline) return;
+
+// Get offline data
+const offlineData = localStorage.getItem('offlineData');
+if (offlineData) {
+const data = JSON.parse(offlineData);
+
+// Sync sales history
+if (data.salesHistory && data.salesHistory.length > 0) {
+// In a real app, this would be an API call
+salesHistory = [...salesHistory, ...data.salesHistory];
+saveSalesHistory();
+showToast(`${data.salesHistory.length} tickets sincronizados`, 'success');
+}
+
+// Clear offline data
+localStorage.removeItem('offlineData');
+}
+
+// Sync with Google Sheets if connected
+if (googleSheetsConnected && settings.autoSyncGoogleSheets) {
+syncWithGoogleSheets();
+}
+}
+
+// Notification Functions
+function initializeNotifications() {
+// Request permission for notifications
+if ('Notification' in window && settings.enableNotifications) {
+Notification.requestPermission().then(permission => {
+if (permission === 'granted') {
+showNotification('Notificaciones activadas', 'Puedes recibir notificaciones del sistema');
+}
+});
+}
+
+// Add notification badge click handler
+document.getElementById('notificationsToggle').addEventListener('click', () => {
+// In a real app, this would show a notifications panel
+showNotification('Panel de notificaciones', 'Aquí verías todas tus notificaciones');
+});
+}
+
+function showNotification(title, body) {
+if ('Notification' in window && Notification.permission === 'granted' && settings.enableNotifications) {
+new Notification(title, {
+body: body,
+icon: 'https://picsum.photos/seed/notification-icon/48/48.jpg'
+});
+}
+}
+
+// Backup Functions
+function scheduleAutoBackup() {
+// Schedule backup every 24 hours
+setInterval(() => {
+if (settings.autoBackup) {
+performBackup(false); // Silent backup
+}
+}, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+}
+
+function performBackup(showMessage = true) {
+// Create backup data
+const backupData = {
+salesHistory,
+deletedTickets,
+numberLimits,
+paleLimits,
+favorites,
+settings,
+lotteryAbbreviations,
+lotteryClosingTimes,
+lastResetDate,
+googleSheetsConnected,
+googleSheetsSpreadsheetId,
+googleSheetsSpreadsheetName,
+googleSheetsUser,
+googleSheetsClientId,
+googleSheetsApiKey,
+googleSheetsLastSyncTime,
+googleSheetsSyncLogs,
+timestamp: new Date().toISOString()
+};
+
+// Save to localStorage
+localStorage.setItem('backupData', JSON.stringify(backupData));
+
+// In a real app, this would be sent to a server
+if (showMessage) {
+showToast('Copia de seguridad realizada correctamente', 'success');
+}
+
+// Show backup status
+elements.backupStatus.classList.add('show');
+setTimeout(() => {
+elements.backupStatus.classList.remove('show');
+}, 3000);
+}
+
+// Utility Functions
+function debounce(func, wait) {
+let timeout;
+return function(...args) {
+const context = this;
+clearTimeout(timeout);
+timeout = setTimeout(() => func.apply(context, args), wait);
+};
+}
+
+function saveOfflineData() {
+if (!isOnline) {
+// Save current data to offline storage
+const offlineData = {
+salesHistory,
+deletedTickets,
+numberLimits,
+paleLimits,
+favorites,
+settings,
+lotteryAbbreviations,
+lotteryClosingTimes,
+lastResetDate
+};
+localStorage.setItem('offlineData', JSON.stringify(offlineData));
+}
+}
+
+// Función para formatear fecha para input (YYYY-MM-DD)
+function formatDateForInput(date) {
+const year = date.getFullYear();
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const day = String(date.getDate()).padStart(2, '0');
+return `${year}-${month}-${day}`;
+}
+
+// Función para formatear fecha para visualización (DD/MM/YYYY)
+function formatDate(dateString) {
+const date = new Date(dateString);
+// Usar métodos locales para evitar problemas de zona horaria
+return date.toLocaleDateString('es-ES');
+}
+
+// Función para formatear hora (HH:MM:SS)
+function formatTime(dateString) {
+const date = new Date(dateString);
+// Usar métodos locales para evitar problemas de zona horaria
+return date.toLocaleTimeString('es-ES');
+}
+
+// Rest of the functions from the original code (with improvements)
+function initializeLoterias() {
+// Populate lottery checkboxes
+LOTERIAS.forEach(l => {
+const checkboxContainer = document.createElement('div');
+checkboxContainer.className = 'lottery-selection-item';
+
+const checkbox = document.createElement('input');
+checkbox.type = 'checkbox';
+checkbox.id = `lottery_${l.replace(/\s+/g, '_')}`;
+checkbox.value = l;
+checkbox.addEventListener('change', updateSelectedLoterias);
+
+const label = document.createElement('label');
+label.htmlFor = checkbox.id;
+label.textContent = l;
+
+checkboxContainer.appendChild(checkbox);
+checkboxContainer.appendChild(label);
+elements.lotteryCheckboxes.appendChild(checkboxContainer);
+});
+
+// Populate filter lottery select
+const filterSelect = document.getElementById('filter_loteria');
+LOTERIAS.forEach(l => {
+const option = document.createElement('option');
+option.value = l;
+option.textContent = l;
+filterSelect.appendChild(option);
+});
+}
+
+function initializeLotterySelection() {
+// Toggle dropdown
+elements.nLoteriaToggle.addEventListener('click', () => {
+elements.lotteryDropdown.classList.toggle('show');
+});
+
+// Select all lotteries
+elements.selectAllLoterias.addEventListener('click', () => {
+const checkboxes = elements.lotteryCheckboxes.querySelectorAll('input[type="checkbox"]');
+const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+checkboxes.forEach(cb => cb.checked = !allChecked);
+updateSelectedLoterias();
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+if (!elements.nLoteriaToggle.contains(e.target) && !elements.lotteryDropdown.contains(e.target)) {
+elements.lotteryDropdown.classList.remove('show');
+}
+});
+}
+
+function initializeLotteryConfig() {
+// Populate lottery configuration table
+renderLotteryConfigTable();
+}
+
+function renderLotteryConfigTable() {
+elements.lotteryConfigTable.innerHTML = '';
+
+LOTERIAS.forEach(loteria => {
+const row = document.createElement('div');
+row.className = 'lottery-config-row';
+
+const nameDiv = document.createElement('div');
+nameDiv.className = 'lottery-config-name';
+nameDiv.textContent = loteria;
+
+const abbrDiv = document.createElement('div');
+abbrDiv.className = 'lottery-config-abbr';
+
+const abbrInput = document.createElement('input');
+abbrInput.type = 'text';
+abbrInput.className = 'form-control form-control-sm';
+abbrInput.value = lotteryAbbreviations[loteria] || '';
+abbrInput.dataset.loteria = loteria;
+abbrInput.addEventListener('change', updateLotteryAbbreviation);
+abbrDiv.appendChild(abbrInput);
+
+const timeDiv = document.createElement('div');
+timeDiv.className = 'lottery-config-time';
+
+const timeInput = document.createElement('input');
+timeInput.type = 'time';
+timeInput.className = 'form-control form-control-sm';
+timeInput.value = lotteryClosingTimes[loteria] || '20:00';
+timeInput.dataset.loteria = loteria;
+timeInput.addEventListener('change', updateLotteryClosingTime);
+timeDiv.appendChild(timeInput);
+
+const actionsDiv = document.createElement('div');
+actionsDiv.className = 'lottery-config-actions';
+
+const resetBtn = document.createElement('button');
+resetBtn.className = 'btn btn-sm btn-outline-secondary';
+resetBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+resetBtn.title = 'Restablecer valores predeterminados';
+resetBtn.addEventListener('click', () => resetLotteryConfig(loteria));
+actionsDiv.appendChild(resetBtn);
+
+row.appendChild(nameDiv);
+row.appendChild(abbrDiv);
+row.appendChild(timeDiv);
+row.appendChild(actionsDiv);
+
+elements.lotteryConfigTable.appendChild(row);
+});
+}
+
+function updateLotteryAbbreviation(e) {
+const loteria = e.target.dataset.loteria;
+const abbreviation = e.target.value;
+lotteryAbbreviations[loteria] = abbreviation;
+saveLotteryConfig();
+}
+
+function updateLotteryClosingTime(e) {
+const loteria = e.target.dataset.loteria;
+const closingTime = e.target.value;
+lotteryClosingTimes[loteria] = closingTime;
+saveLotteryConfig();
+checkClosedLotteries();
+}
+
+function resetLotteryConfig(loteria) {
+lotteryAbbreviations[loteria] = DEFAULT_ABBREVIATIONS[loteria] || '';
+lotteryClosingTimes[loteria] = DEFAULT_CLOSING_TIMES[loteria] || '20:00';
+renderLotteryConfigTable();
+saveLotteryConfig();
+checkClosedLotteries();
+showToast(`Configuración de ${loteria} restablecida`, 'info');
+}
+
+function checkClosedLotteries() {
+const now = new Date();
+const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+const closedLotteries = [];
+
+// Update lottery selection items to show closed status
+const lotteryItems = elements.lotteryCheckboxes.querySelectorAll('.lottery-selection-item');
+lotteryItems.forEach(item => {
+const checkbox = item.querySelector('input[type="checkbox"]');
+const loteria = checkbox.value;
+const closingTime = lotteryClosingTimes[loteria] || '20:00';
+
+if (currentTime > closingTime) {
+item.classList.add('closed');
+checkbox.disabled = true;
+closedLotteries.push(loteria);
+} else {
+item.classList.remove('closed');
+checkbox.disabled = false;
+}
+});
+
+// Update selected lotteries to remove closed ones
+selectedLoterias = selectedLoterias.filter(loteria => !closedLotteries.includes(loteria));
+updateSelectedLoterias();
+
+// Show indicator if any selected lotteries are closed
+if (closedLotteries.length > 0) {
+elements.lotteryClosedIndicator.textContent = `Las siguientes loterías están cerradas: ${closedLotteries.join(', ')}`;
+elements.lotteryClosedIndicator.style.display = 'block';
+} else {
+elements.lotteryClosedIndicator.style.display = 'none';
+}
+}
+
+function checkAndResetDailyLimits() {
+const today = new Date();
+const todayString = formatDateForInput(today);
+
+// Check if we need to reset the limits (either first time or new day)
+if (!lastResetDate || lastResetDate !== todayString) {
+// Reset daily limits
+numberLimits = {};
+paleLimits = {};
+lastResetDate = todayString;
+saveNumberLimits();
+saveLotteryConfig();
+
+// Show notification to user
+showToast('Límites diarios restablecidos', 'info');
+}
+}
+
+function updateSelectedLoterias() {
+const checkboxes = elements.lotteryCheckboxes.querySelectorAll('input[type="checkbox"]:checked:not(:disabled)');
+selectedLoterias = Array.from(checkboxes).map(cb => cb.value);
+
+// Update display
+if (selectedLoterias.length === 0) {
+elements.selectedLoteriaText.textContent = 'Seleccionar lotería';
+elements.selectedLoteriasDisplay.textContent = '';
+} else if (selectedLoterias.length === 1) {
+elements.selectedLoteriaText.textContent = selectedLoterias[0];
+elements.selectedLoteriasDisplay.textContent = '';
+} else {
+elements.selectedLoteriaText.textContent = `${selectedLoterias.length} loterías seleccionadas`;
+elements.selectedLoteriasDisplay.textContent = selectedLoterias.join(', ');
+}
+
+// Update limit indicators
+updateLimitIndicators();
+}
+
+function initializeKeypad() {
+// Add event listeners to keypad buttons
+document.querySelectorAll('.keypad-btn').forEach(btn => {
+btn.addEventListener('click', (e) => {
+const value = e.target.getAttribute('data-value');
+const action = e.target.getAttribute('data-action');
+
+if (value !== null) {
+// Add digit to appropriate input based on bet type
+if (betType === 'simple') {
+const currentValue = elements.nNumero.value;
+if (currentValue.length < 2) {
+elements.nNumero.value = currentValue + value;
+// Add pulse animation
+e.target.classList.add('pulse');
+setTimeout(() => e.target.classList.remove('pulse'), 500);
+}
+} else {
+// For pale, determine which input to update
+const firstInput = elements.nNumero1;
+const secondInput = elements.nNumero2;
+
+if (firstInput.value.length < 2) {
+firstInput.value = firstInput.value + value;
+// Add pulse animation
+e.target.classList.add('pulse');
+setTimeout(() => e.target.classList.remove('pulse'), 500);
+} else if (secondInput.value.length < 2) {
+secondInput.value = secondInput.value + value;
+// Add pulse animation
+e.target.classList.add('pulse');
+setTimeout(() => e.target.classList.remove('pulse'), 500);
+}
+}
+} else if (action === 'clear') {
+// Clear inputs
+if (betType === 'simple') {
+elements.nNumero.value = '';
+} else {
+elements.nNumero1.value = '';
+elements.nNumero2.value = '';
+}
+} else if (action === 'enter') {
+// Trigger add entry
+addEntry();
+}
+
+// Update limit indicators
+updateLimitIndicators();
+});
+});
+}
+
+function initializeBetTypeToggle() {
+// Add event listeners to bet type buttons
+document.querySelectorAll('.bet-type-btn').forEach(btn => {
+btn.addEventListener('click', (e) => {
+// Update active state
+document.querySelectorAll('.bet-type-btn').forEach(b => b.classList.remove('active'));
+e.target.classList.add('active');
+
+// Update bet type
+betType = e.target.getAttribute('data-type');
+
+// Toggle input visibility
+if (betType === 'simple') {
+elements.simpleNumberInput.style.display = 'block';
+elements.paleNumberInput.style.display = 'none';
+elements.nNumero.focus();
+} else {
+elements.simpleNumberInput.style.display = 'none';
+elements.paleNumberInput.style.display = 'block';
+elements.nNumero1.focus();
+}
+
+// Update limit indicators
+updateLimitIndicators();
+});
+});
+}
+
+function initializeTheme() {
+// Apply saved theme
+if (settings.darkMode) {
+document.documentElement.setAttribute('data-theme', 'dark');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+} else {
+document.documentElement.removeAttribute('data-theme');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+}
+}
+
+function initializeKeyboardShortcuts() {
+document.addEventListener('keydown', (e) => {
+// Ctrl+N - New entry
+if (e.ctrlKey && e.key === 'n') {
+e.preventDefault();
+addEntry();
+}
+// Ctrl+S - Save ticket
+else if (e.ctrlKey && e.key === 's') {
+e.preventDefault();
+finalizeTicket();
+}
+// Ctrl+D - Save draft
+else if (e.ctrlKey && e.key === 'd') {
+e.preventDefault();
+saveDraft();
+}
+// Ctrl+L - Load draft
+else if (e.ctrlKey && e.key === 'l') {
+e.preventDefault();
+loadDraft();
+}
+// Ctrl+Delete - Clear entries
+else if (e.ctrlKey && e.key === 'Delete') {
+e.preventDefault();
+clearEntries();
+}
+// Ctrl+F - Focus search
+else if (e.ctrlKey && e.key === 'f') {
+e.preventDefault();
+// Determine which tab is active and focus the appropriate search
+const activeTab = document.querySelector('.tab-pane.active').id;
+if (activeTab === 'historial') {
+elements.historySearch.focus();
+}
+}
+// Ctrl+P - Print
+else if (e.ctrlKey && e.key === 'p') {
+e.preventDefault();
+if (currentEntries.length > 0) {
+finalizeTicket();
+}
+}
+// Ctrl+T - Toggle theme
+else if (e.ctrlKey && e.key === 't') {
+e.preventDefault();
+toggleTheme();
+}
+// Ctrl+B - Backup
+else if (e.ctrlKey && e.key === 'b') {
+e.preventDefault();
+performBackup();
+}
+// F1 - Help
+else if (e.key === 'F1') {
+e.preventDefault();
+const shortcutsModal = new bootstrap.Modal(document.getElementById('shortcutsModal'));
+shortcutsModal.show();
+}
+});
+}
+
+function initializeNumericInputs() {
+// Handle numeric input validation
+const numericInputs = document.querySelectorAll('input[type="tel"]');
+numericInputs.forEach(input => {
+input.addEventListener('input', (e) => {
+// Only allow numbers
+let value = e.target.value.replace(/[^0-9]/g, '');
+e.target.value = value;
+
+// Update limit indicators if it's a number input
+if (input.id === 'n_numero' || input.id === 'n_numero1' || input.id === 'n_numero2') {
+updateLimitIndicators();
+}
+});
+
+input.addEventListener('focus', (e) => {
+// Select all text on focus
+e.target.select();
+});
+
+// Prevent non-numeric input
+input.addEventListener('keypress', (e) => {
+if (!/[0-9]/.test(e.key) && e.key !== 'Enter' && e.key !== 'Tab' && e.key !== 'Backspace') {
+e.preventDefault();
+}
+});
+});
+
+// Handle value input (decimal)
+elements.nValor.addEventListener('input', (e) => {
+// Only allow numbers and decimal point
+let value = e.target.value.replace(/[^0-9.]/g, '');
+// Ensure only one decimal point
+const parts = value.split('.');
+if (parts.length > 2) {
+value = parts[0] + '.' + parts.slice(1).join('');
+}
+e.target.value = value;
+});
+}
+
+function toggleTheme() {
+const currentTheme = document.documentElement.getAttribute('data-theme');
+if (currentTheme === 'dark') {
+document.documentElement.removeAttribute('data-theme');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+settings.darkMode = false;
+} else {
+document.documentElement.setAttribute('data-theme', 'dark');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+settings.darkMode = true;
+}
+saveSettings();
+}
+
+function toggleSound() {
+soundEnabled = elements.soundToggle.checked;
+settings.soundNotifications = soundEnabled;
+saveSettings();
+}
+
+function toggleDarkMode() {
+const isDarkMode = elements.darkMode.checked;
+if (isDarkMode) {
+document.documentElement.setAttribute('data-theme', 'dark');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+} else {
+document.documentElement.removeAttribute('data-theme');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+}
+settings.darkMode = isDarkMode;
+saveSettings();
+}
+
+function toggleKeypad() {
+keypadEnabled = elements.enableKeypad.checked;
+settings.enableKeypad = keypadEnabled;
+saveSettings();
+
+// Show/hide keypad
+const keypadContainer = document.getElementById('quickNumbers').parentElement;
+if (keypadEnabled) {
+keypadContainer.style.display = 'block';
+} else {
+keypadContainer.style.display = 'none';
+}
+}
+
+function updateTicketFontSize() {
+settings.ticketFontSize = parseInt(elements.ticketFontSize.value);
+saveSettings();
+}
+
+function updateTicketFormat() {
+settings.ticketFormat = elements.ticketFormat.value;
+saveSettings();
+}
+
+function toggleStatsPeriod() {
+const period = elements.statsPeriod.value;
+if (period === 'custom') {
+elements.customDates.style.display = 'block';
+} else {
+elements.customDates.style.display = 'none';
+}
+}
+
+function updateLimitIndicators() {
+const valor = parseFloat(elements.nValor.value) || 0;
+
+if (betType === 'simple') {
+const numero = elements.nNumero.value.trim();
+
+if (numero && selectedLoterias.length > 0) {
+// Check limits for each selected lottery
+let allValid = true;
+let lowestRemainingLimit = Infinity;
+
+selectedLoterias.forEach(loteria => {
+const key = `${numero}-${loteria}`;
+const currentLimit = numberLimits[key] || 0;
+const remainingLimit = settings.maxBetAmount - currentLimit;
+lowestRemainingLimit = Math.min(lowestRemainingLimit, remainingLimit);
+
+if (valor > remainingLimit) {
+allValid = false;
+}
+});
+
+if (!allValid) {
+elements.numberLimitIndicator.className = 'limit-indicator limit-danger';
+elements.numberLimitIndicator.textContent = `Límite excedido. Máximo disponible: $${formatCurrency(lowestRemainingLimit)}`;
+} else if (lowestRemainingLimit < settings.maxBetAmount * 0.3) {
+elements.numberLimitIndicator.className = 'limit-indicator limit-warning';
+elements.numberLimitIndicator.textContent = `Límite cercano. Restante: $${formatCurrency(lowestRemainingLimit)}`;
+} else {
+elements.numberLimitIndicator.className = 'limit-indicator limit-success';
+elements.numberLimitIndicator.textContent = `Disponible: $${formatCurrency(lowestRemainingLimit)}`;
+}
+
+// Update progress bar
+let progressBar = elements.numberLimitIndicator.querySelector('.progress-bar');
+if (!progressBar) {
+progressBar = document.createElement('div');
+progressBar.className = 'progress-bar';
+elements.numberLimitIndicator.appendChild(progressBar);
+}
+progressBar.style.width = `${(1 - lowestRemainingLimit / settings.maxBetAmount) * 100}%`;
+} else {
+elements.numberLimitIndicator.textContent = '';
+}
+
+elements.paleLimitIndicator.textContent = '';
+} else {
+const numero1 = elements.nNumero1.value.trim();
+const numero2 = elements.nNumero2.value.trim();
+
+if (numero1 && numero2 && selectedLoterias.length > 0) {
+// Check limits for each selected lottery
+let allValid = true;
+let lowestRemainingLimit = Infinity;
+
+selectedLoterias.forEach(loteria => {
+const paleKey = `${numero1}-${numero2}-${loteria}`;
+const currentLimit = paleLimits[paleKey] || 0;
+const remainingLimit = settings.maxPaleAmount - currentLimit;
+lowestRemainingLimit = Math.min(lowestRemainingLimit, remainingLimit);
+
+if (valor > remainingLimit) {
+allValid = false;
+}
+});
+
+if (!allValid) {
+elements.paleLimitIndicator.className = 'limit-indicator limit-danger';
+elements.paleLimitIndicator.textContent = `Límite excedido. Máximo disponible: $${formatCurrency(lowestRemainingLimit)}`;
+} else if (lowestRemainingLimit < settings.maxPaleAmount * 0.3) {
+elements.paleLimitIndicator.className = 'limit-indicator limit-warning';
+elements.paleLimitIndicator.textContent = `Límite cercano. Restante: $${formatCurrency(lowestRemainingLimit)}`;
+} else {
+elements.paleLimitIndicator.className = 'limit-indicator limit-success';
+elements.paleLimitIndicator.textContent = `Disponible: $${formatCurrency(lowestRemainingLimit)}`;
+}
+
+// Update progress bar
+let progressBar = elements.paleLimitIndicator.querySelector('.progress-bar');
+if (!progressBar) {
+progressBar = document.createElement('div');
+progressBar.className = 'progress-bar';
+elements.paleLimitIndicator.appendChild(progressBar);
+}
+progressBar.style.width = `${(1 - lowestRemainingLimit / settings.maxPaleAmount) * 100}%`;
+} else {
+elements.paleLimitIndicator.textContent = '';
+}
+
+elements.numberLimitIndicator.textContent = '';
+}
+}
+
+function addEntry() {
+let numero, valor;
+
+valor = parseFloat(elements.nValor.value);
+
+// Validation
+if (isNaN(valor) || valor <= 0) {
+showToast('Valor inválido.', 'danger');
+return;
+}
+
+if (selectedLoterias.length === 0) {
+showToast('Debe seleccionar al menos una lotería.', 'danger');
+return;
+}
+
+// Check if any selected lottery is closed
+const now = new Date();
+const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+const closedSelectedLotteries = selectedLoterias.filter(loteria => {
+const closingTime = lotteryClosingTimes[loteria] || '20:00';
+return currentTime > closingTime;
+});
+
+if (closedSelectedLotteries.length > 0) {
+showToast(`Las siguientes loterías están cerradas: ${closedSelectedLotteries.join(', ')}`, 'danger');
+return;
+}
+
+if (betType === 'simple') {
+numero = elements.nNumero.value.trim();
+
+if (!/^[0-9]{1,2}$/.test(numero)) {
+showToast('Número inválido: solo 1 o 2 dígitos.', 'danger');
+return;
+}
+
+// Check limits for each selected lottery
+let canAddAll = true;
+let failedLoterias = [];
+
+selectedLoterias.forEach(loteria => {
+const key = `${numero}-${loteria}`;
+const currentLimit = numberLimits[key] || 0;
+if (currentLimit + valor > settings.maxBetAmount) {
+canAddAll = false;
+failedLoterias.push(loteria);
+}
+});
+
+if (!canAddAll) {
+showToast(`Límite excedido para el número ${numero} en: ${failedLoterias.join(', ')}.`, 'danger');
+return;
+}
+
+// Add entries for each selected lottery
+selectedLoterias.forEach(loteria => {
+currentEntries.push({
+numero,
+loteria,
+valor: Number(valor),
+type: 'simple'
+});
+
+// Update limit
+const key = `${numero}-${loteria}`;
+numberLimits[key] = (numberLimits[key] || 0) + valor;
+});
+} else {
+const numero1 = elements.nNumero1.value.trim();
+const numero2 = elements.nNumero2.value.trim();
+
+if (!/^[0-9]{1,2}$/.test(numero1) || !/^[0-9]{1,2}$/.test(numero2)) {
+showToast('Números inválidos: solo 1 o 2 dígitos cada uno.', 'danger');
+return;
+}
+
+numero = `${numero1}-${numero2}`;
+
+// Check limits for each selected lottery
+let canAddAll = true;
+let failedLoterias = [];
+
+selectedLoterias.forEach(loteria => {
+const paleKey = `${numero1}-${numero2}-${loteria}`;
+const currentLimit = paleLimits[paleKey] || 0;
+if (currentLimit + valor > settings.maxPaleAmount) {
+canAddAll = false;
+failedLoterias.push(loteria);
+}
+});
+
+if (!canAddAll) {
+showToast(`Límite excedido para el pale ${numero} en: ${failedLoterias.join(', ')}.`, 'danger');
+return;
+}
+
+// Add entries for each selected lottery
+selectedLoterias.forEach(loteria => {
+currentEntries.push({
+numero,
+loteria,
+valor: Number(valor),
+type: 'pale',
+numero1,
+numero2
+});
+
+// Update limit
+const paleKey = `${numero1}-${numero2}-${loteria}`;
+paleLimits[paleKey] = (paleLimits[paleKey] || 0) + valor;
+});
+}
+
+// Update UI
+renderEntries();
+saveNumberLimits();
+
+// Reset form
+if (betType === 'simple') {
+elements.nNumero.value = '';
+elements.nNumero.focus();
+} else {
+elements.nNumero1.value = '';
+elements.nNumero2.value = '';
+elements.nNumero1.focus();
+}
+elements.nValor.value = settings.defaultValue;
+
+// Update limit indicators
+updateLimitIndicators();
+
+// Play sound if enabled
+if (soundEnabled) {
+playSound('add');
+}
+
+const loteriasText = selectedLoterias.length === 1 ? 'lotería' : 'loterías';
+showToast(`Jugada agregada a ${selectedLoterias.length} ${loteriasText} correctamente.`, 'success');
+}
+
+function renderEntries() {
+elements.entriesTable.innerHTML = '';
+let total = 0;
+
+currentEntries.forEach((entry, index) => {
+total += entry.valor;
+
+const row = document.createElement('tr');
+row.innerHTML = `
+<td class="number-cell">${entry.numero}</td>
+<td class="lottery-cell">${entry.loteria}</td>
+<td class="value-cell">$${formatCurrency(entry.valor)}</td>
+<td class="action-cell">
+<button class="btn btn-sm btn-danger delete-entry" data-index="${index}">
+<i class="bi bi-trash"></i>
+</button>
+</td>
+`;
+elements.entriesTable.appendChild(row);
+});
+
+// Update total and count
+elements.currentTotal.textContent = formatCurrency(total);
+elements.entriesCount.textContent = `${currentEntries.length} jugada${currentEntries.length !== 1 ? 's' : ''}`;
+
+// Add event listeners to delete buttons
+document.querySelectorAll('.delete-entry').forEach(btn => {
+btn.addEventListener('click', (e) => {
+const index = parseInt(e.currentTarget.getAttribute('data-index'));
+const entry = currentEntries[index];
+
+// Update limits
+if (entry.type === 'simple') {
+const key = `${entry.numero}-${entry.loteria}`;
+const currentLimit = numberLimits[key] || 0;
+numberLimits[key] = Math.max(0, currentLimit - entry.valor);
+} else {
+const paleKey = `${entry.numero1}-${entry.numero2}-${entry.loteria}`;
+const currentLimit = paleLimits[paleKey] || 0;
+paleLimits[paleKey] = Math.max(0, currentLimit - entry.valor);
+}
+
+// Remove entry
+currentEntries.splice(index, 1);
+renderEntries();
+saveNumberLimits();
+
+// Update limit indicators
+updateLimitIndicators();
+
+if (soundEnabled) {
+playSound('delete');
+}
+
+showToast('Jugada eliminada.', 'info');
+});
+});
+}
+
+function filterHistoryEntries() {
+renderHistory();
+}
+
+function clearEntries() {
+if (currentEntries.length === 0) {
+showToast('No hay jugadas para limpiar.', 'info');
+return;
+}
+
+if (confirm('¿Está seguro de que desea limpiar todas las jugadas?')) {
+// Reset limits for all entries
+currentEntries.forEach(entry => {
+if (entry.type === 'simple') {
+const key = `${entry.numero}-${entry.loteria}`;
+const currentLimit = numberLimits[key] || 0;
+numberLimits[key] = Math.max(0, currentLimit - entry.valor);
+} else {
+const paleKey = `${entry.numero1}-${entry.numero2}-${entry.loteria}`;
+const currentLimit = paleLimits[paleKey] || 0;
+paleLimits[paleKey] = Math.max(0, currentLimit - entry.valor);
+}
+});
+
+currentEntries = [];
+renderEntries();
+saveNumberLimits();
+
+// Update limit indicators
+updateLimitIndicators();
+
+if (soundEnabled) {
+playSound('clear');
+}
+
+showToast('Todas las jugadas han sido eliminadas.', 'info');
+}
+}
+
+function finalizeTicket() {
+if (currentEntries.length === 0) {
+showToast('No hay jugadas en el ticket.', 'warning');
+return;
+}
+
+// Show loading modal
+const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+loadingModal.show();
+
+// Simulate processing time
+setTimeout(() => {
+// Calculate total
+let total = 0;
+currentEntries.forEach(entry => {
+total += entry.valor;
+});
+
+// Create ticket data with corrected date
+const now = new Date();
+const ticketData = {
+id: generateTicketId(),
+date: now.toISOString(),
+localDate: formatDateForInput(now), // Add local date for correct display
+entries: [...currentEntries],
+total: total,
+deleted: false,
+user: currentUser ? currentUser.username : 'Banca01'
+};
+
+// Add to history
+salesHistory.push(ticketData);
+saveSalesHistory();
+saveOfflineData();
+
+// Generate and print ticket
+generateTicket(ticketData);
+
+// Clear current entries (limits are already updated when entries are added)
+currentEntries = [];
+renderEntries();
+
+// Update stats
+updateStats();
+
+// Hide loading modal
+loadingModal.hide();
+
+// Show success message
+showToast('Ticket guardado e impreso correctamente.', 'success');
+
+// Play sound if enabled
+if (soundEnabled) {
+playSound('success');
+}
+
+// Send notification
+if (settings.enableNotifications) {
+showNotification('Ticket guardado', `Ticket #${ticketData.id} guardado correctamente`);
+}
+
+// Sync with Google Sheets if enabled
+if (googleSheetsConnected && settings.autoSyncGoogleSheets && settings.syncOnSave === 'immediately') {
+syncWithGoogleSheets();
+} else if (googleSheetsConnected && settings.autoSyncGoogleSheets && settings.syncOnSave === 'delayed') {
+// Schedule sync with delay
+setTimeout(() => {
+syncWithGoogleSheets();
+}, 5 * 60 * 1000); // 5 minutes
+}
+}, 1000);
+}
+
+function generateTicket(ticketData) {
+// Agrupar las jugadas por número y valor para agrupar en el ticket
+const groupedEntries = {};
+ticketData.entries.forEach(entry => {
+const key = `${entry.numero}-${entry.valor}`;
+if (!groupedEntries[key]) {
+groupedEntries[key] = {
+numero: entry.numero,
+valor: entry.valor,
+loterias: []
+};
+}
+groupedEntries[key].loterias.push(entry.loteria);
+});
+
+// Convertir a array para facilitar el procesamiento
+const groupedArray = Object.values(groupedEntries);
+
+// Create a new window for the ticket
+const ticketWindow = window.open('', '', 'width=400,height=600');
+
+// Write ticket HTML with improved formatting
+ticketWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ticket de Lotería</title>
+<style>
+body {
+font-family: 'Courier New', monospace;
+margin: 0;
+padding: 10px;
+width: 380px;
+}
+.ticket-print-container {
+font-size: ${settings.ticketFontSize}px; /* Use configured font size */
+}
+.header {
+text-align: center;
+margin-bottom: 15px;
+border-bottom: 1px dashed #000;
+padding-bottom: 10px;
+}
+.header h1 {
+margin: 0;
+font-size: ${settings.ticketFontSize + 6}px; /* Slightly larger for title */
+}
+.header p {
+margin: 3px 0;
+font-size: ${settings.ticketFontSize - 6}px; /* Slightly smaller for details */
+}
+.ticket-info {
+margin-bottom: 10px;
+font-size: ${settings.ticketFontSize - 6}px; /* Slightly smaller for details */
+}
+.ticket-info div {
+margin-bottom: 3px;
+}
+.ticket-print-abbreviations {
+margin-bottom: 10px;
+font-size: ${settings.ticketFontSize - 10}px; /* Smaller for abbreviations */
+}
+.ticket-print-abbreviations-title {
+font-weight: bold;
+margin-bottom: 5px;
+}
+.ticket-print-abbreviation {
+margin-bottom: 2px;
+}
+.ticket-table {
+width: 100%;
+border-collapse: collapse;
+margin-bottom: 10px;
+font-size: ${settings.ticketFontSize}px; /* Use configured font size */
+}
+.ticket-table th {
+text-align: left;
+border-bottom: 1px dashed #000;
+padding: 3px 0;
+}
+.ticket-table td {
+padding: 3px 0;
+}
+.ticket-table .number {
+text-align: center;
+font-weight: bold;
+}
+.ticket-table .lottery {
+text-align: left;
+}
+.ticket-table .value {
+text-align: right;
+}
+.total {
+text-align: right;
+font-weight: bold;
+font-size: ${settings.ticketFontSize + 2}px; /* Slightly larger for total */
+border-top: 1px dashed #000;
+padding-top: 5px;
+margin-top: 5px;
+}
+.footer {
+text-align: center;
+margin-top: 15px;
+font-size: ${settings.ticketFontSize - 10}px; /* Smaller for footer */
+border-top: 1px dashed #000;
+padding-top: 10px;
+}
+</style>
+</head>
+<body>
+<div class="ticket-print-container">
+<div class="header">
+<h1>${settings.shopName}</h1>
+<p>${settings.shopAddress}</p>
+<p>Tel: ${settings.shopPhone}</p>
+<p>RNC: ${settings.shopRNC}</p>
+</div>
+
+<div class="ticket-info">
+<div><strong>Ticket:</strong> ${ticketData.id}</div>
+<div><strong>Fecha:</strong> ${formatDate(ticketData.date)}</div>
+<div><strong>Hora:</strong> ${formatTime(ticketData.date)}</div>
+<div><strong>Vendedor:</strong> ${ticketData.user}</div>
+</div>
+
+ ${settings.ticketFormat === 'abbreviated' ? `
+<div class="ticket-print-abbreviations">
+<div class="ticket-print-abbreviations-title">Loteria</div>
+ ${Object.entries(lotteryAbbreviations)
+.filter(([loteria]) => groupedArray.some(group => group.loterias.includes(loteria)))
+.map(([loteria, abbr]) => `<div class="ticket-print-abbreviation">${abbr}->${loteria}</div>`)
+.join('')}
+</div>
+` : ''}
+
+<table class="ticket-table">
+<thead>
+<tr>
+<th class="number">Núm.</th>
+<th class="lottery">Lotería</th>
+<th class="value">Valor</th>
+</tr>
+</thead>
+<tbody>
+ ${groupedArray.map(entry => {
+const lotteryDisplay = settings.ticketFormat === 'abbreviated' 
+? entry.loterias.map(l => lotteryAbbreviations[l] || l).join(', ')
+: entry.loterias.join(', ');
+return `
+<tr>
+<td class="number">${entry.numero}</td>
+<td class="lottery">${lotteryDisplay}</td>
+<td class="value">$${formatCurrency(entry.valor)}</td>
+</tr>
+`;
+}).join('')}
+</tbody>
+</table>
+
+<div class="total">
+TOTAL: $${formatCurrency(ticketData.total)}
+</div>
+
+<div class="footer">
+<p>¡Gracias por su compra!</p>
+ ${settings.ticketFormat === 'abbreviated' ? '' : '<p>Este ticket no tiene validez sin sello</p>'}
+</div>
+</div>
+</body>
+</html>
+`);
+
+ticketWindow.document.close();
+
+// Print ticket if auto-print is enabled
+if (settings.autoPrint) {
+ticketWindow.print();
+}
+}
+
+function saveDraft() {
+if (currentEntries.length === 0) {
+showToast('No hay jugadas para guardar como borrador.', 'info');
+return;
+}
+
+// Save to localStorage
+localStorage.setItem('ticketDraft', JSON.stringify(currentEntries));
+
+showToast('Borrador guardado correctamente.', 'success');
+}
+
+function loadDraft() {
+// Check if there's a draft in localStorage
+const draft = localStorage.getItem('ticketDraft');
+
+if (draft) {
+currentEntries = JSON.parse(draft);
+renderEntries();
+
+showToast('Borrador recuperado correctamente.', 'success');
+} else {
+showToast('No hay borradores guardados.', 'warning');
+}
+}
+
+function loadSalesHistory() {
+// Load from localStorage
+const history = localStorage.getItem('salesHistory');
+
+if (history) {
+salesHistory = JSON.parse(history);
+}
+
+// Render history
+renderHistory();
+}
+
+function saveSalesHistory() {
+// Save to localStorage
+localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+}
+
+function loadDeletedTickets() {
+// Load from localStorage
+const deleted = localStorage.getItem('deletedTickets');
+
+if (deleted) {
+deletedTickets = JSON.parse(deleted);
+}
+}
+
+function saveDeletedTickets() {
+// Save to localStorage
+localStorage.setItem('deletedTickets', JSON.stringify(deletedTickets));
+}
+
+function loadNumberLimits() {
+// Load from localStorage
+const limits = localStorage.getItem('numberLimits');
+const paleLimitsData = localStorage.getItem('paleLimits');
+const lastReset = localStorage.getItem('lastResetDate');
+
+if (limits) {
+numberLimits = JSON.parse(limits);
+}
+
+if (paleLimitsData) {
+paleLimits = JSON.parse(paleLimitsData);
+}
+
+if (lastReset) {
+lastResetDate = lastReset;
+}
+}
+
+function saveNumberLimits() {
+// Save to localStorage
+localStorage.setItem('numberLimits', JSON.stringify(numberLimits));
+localStorage.setItem('paleLimits', JSON.stringify(paleLimits));
+localStorage.setItem('lastResetDate', lastResetDate);
+}
+
+function loadFavorites() {
+// Load from localStorage
+const favs = localStorage.getItem('favorites');
+
+if (favs) {
+favorites = JSON.parse(favs);
+}
+
+renderFavorites();
+}
+
+function saveFavorites() {
+// Save to localStorage
+localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+function loadLotteryConfig() {
+// Load lottery abbreviations and closing times from localStorage
+const abbreviations = localStorage.getItem('lotteryAbbreviations');
+const closingTimes = localStorage.getItem('lotteryClosingTimes');
+const lastReset = localStorage.getItem('lastResetDate');
+
+if (abbreviations) {
+lotteryAbbreviations = { ...DEFAULT_ABBREVIATIONS, ...JSON.parse(abbreviations) };
+}
+
+if (closingTimes) {
+lotteryClosingTimes = { ...DEFAULT_CLOSING_TIMES, ...JSON.parse(closingTimes) };
+}
+
+if (lastReset) {
+lastResetDate = lastReset;
+}
+
+// Update the configuration table if it exists
+if (elements.lotteryConfigTable) {
+renderLotteryConfigTable();
+}
+}
+
+function saveLotteryConfig() {
+// Save to localStorage
+localStorage.setItem('lotteryAbbreviations', JSON.stringify(lotteryAbbreviations));
+localStorage.setItem('lotteryClosingTimes', JSON.stringify(lotteryClosingTimes));
+localStorage.setItem('lastResetDate', lastResetDate);
+}
+
+function renderFavorites() {
+elements.favoritesList.innerHTML = '';
+
+if (favorites.length === 0) {
+elements.favoritesList.innerHTML = '<span class="text-muted">No hay números favoritos</span>';
+return;
+}
+
+favorites.forEach((fav, index) => {
+const favElement = document.createElement('span');
+favElement.className = 'favorite-number';
+favElement.innerHTML = `
+ ${fav}
+<i class="bi bi-x-circle" data-index="${index}"></i>
+`;
+
+favElement.addEventListener('click', (e) => {
+if (e.target.classList.contains('bi-x-circle')) {
+// Remove favorite
+favorites.splice(index, 1);
+saveFavorites();
+renderFavorites();
+} else {
+// Use favorite number
+if (betType === 'simple') {
+elements.nNumero.value = fav;
+elements.nNumero.focus();
+} else {
+// For pale, determine which input to update
+const firstInput = elements.nNumero1;
+const secondInput = elements.nNumero2;
+
+if (firstInput.value.length < 2) {
+firstInput.value = fav;
+firstInput.focus();
+} else if (secondInput.value.length < 2) {
+secondInput.value = fav;
+secondInput.focus();
+}
+}
+updateLimitIndicators();
+}
+});
+
+elements.favoritesList.appendChild(favElement);
+});
+}
+
+function addToFavorites() {
+let number;
+
+if (betType === 'simple') {
+number = elements.nNumero.value.trim();
+} else {
+const numero1 = elements.nNumero1.value.trim();
+const numero2 = elements.nNumero2.value.trim();
+number = `${numero1}-${numero2}`;
+}
+
+if (!number) {
+showToast('No hay número para agregar a favoritos.', 'warning');
+return;
+}
+
+if (favorites.includes(number)) {
+showToast('Este número ya está en favoritos.', 'info');
+return;
+}
+
+favorites.push(number);
+saveFavorites();
+renderFavorites();
+
+showToast('Número agregado a favoritos.', 'success');
+}
+
+function renderHistory() {
+elements.historyList.innerHTML = '';
+
+if (salesHistory.length === 0) {
+elements.historyList.innerHTML = '<p class="text-center">No hay ventas registradas.</p>';
+return;
+}
+
+// Get filter values
+const filterDate = elements.filterDate.value;
+const filterLoteria = elements.filterLoteria.value;
+const searchTerm = elements.historySearch.value.toLowerCase();
+
+// Filter history
+let filteredHistory = [...salesHistory];
+
+if (filterDate) {
+filteredHistory = filteredHistory.filter(ticket => {
+// Use localDate if available, otherwise extract from date
+const ticketDate = ticket.localDate || ticket.date.split('T')[0];
+return ticketDate === filterDate;
+});
+}
+
+if (filterLoteria) {
+filteredHistory = filteredHistory.filter(ticket => {
+return ticket.entries.some(entry => entry.loteria === filterLoteria);
+});
+}
+
+if (searchTerm) {
+filteredHistory = filteredHistory.filter(ticket => {
+return ticket.id.toLowerCase().includes(searchTerm) ||
+ticket.entries.some(entry => 
+entry.numero.toLowerCase().includes(searchTerm) || 
+entry.loteria.toLowerCase().includes(searchTerm)
+);
+});
+}
+
+// Sort by date (newest first)
+filteredHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+// Render history items
+filteredHistory.forEach(ticket => {
+const historyItem = document.createElement('div');
+historyItem.className = ticket.deleted ? 'history-item deleted-ticket' : 'history-item';
+
+const formattedDate = formatDate(ticket.date);
+const formattedTime = formatTime(ticket.date);
+
+historyItem.innerHTML = `
+<div class="d-flex justify-content-between align-items-start">
+<div>
+<h6 class="mb-1">
+Ticket #${ticket.id}
+ ${ticket.deleted ? '<span class="deleted-badge">ELIMINADO</span>' : ''}
+</h6>
+<div class="history-date">${formattedDate} ${formattedTime}</div>
+<div class="mt-2">
+ ${ticket.entries.map(entry => `
+<span class="badge bg-light text-dark me-1">${entry.numero}</span>
+<span class="badge bg-secondary me-2">${entry.loteria}</span>
+<span class="text-muted">$${formatCurrency(entry.valor)}</span>
+<br>
+`).join('')}
+</div>
+</div>
+<div class="text-end">
+<div class="history-total">$${formatCurrency(ticket.total)}</div>
+<div class="history-actions">
+<button class="btn btn-sm btn-outline-primary reprint-ticket" data-id="${ticket.id}">
+<i class="bi bi-printer"></i> Reimprimir
+</button>
+<button class="btn btn-sm btn-outline-info copy-ticket" data-id="${ticket.id}">
+<i class="bi bi-clipboard"></i> Copiar
+</button>
+ ${!ticket.deleted ? `
+<button class="btn btn-sm btn-outline-danger delete-ticket" data-id="${ticket.id}">
+<i class="bi bi-trash"></i> Eliminar
+</button>
+` : ''}
+</div>
+</div>
+</div>
+`;
+
+elements.historyList.appendChild(historyItem);
+});
+
+// Add event listeners to action buttons
+document.querySelectorAll('.reprint-ticket').forEach(btn => {
+btn.addEventListener('click', (e) => {
+const ticketId = e.currentTarget.getAttribute('data-id');
+const ticket = salesHistory.find(t => t.id === ticketId);
+
+if (ticket) {
+generateTicket(ticket);
+showToast('Ticket reimpreso correctamente.', 'success');
+}
+});
+});
+
+document.querySelectorAll('.copy-ticket').forEach(btn => {
+btn.addEventListener('click', (e) => {
+const ticketId = e.currentTarget.getAttribute('data-id');
+const ticket = salesHistory.find(t => t.id === ticketId);
+
+if (ticket) {
+// Copy entries to current ticket
+currentEntries = [...ticket.entries];
+renderEntries();
+
+// Switch to sell tab
+document.getElementById('vender-tab').click();
+
+showToast('Ticket copiado correctamente. Ahora puedes modificar las jugadas.', 'success');
+}
+});
+});
+
+document.querySelectorAll('.delete-ticket').forEach(btn => {
+btn.addEventListener('click', (e) => {
+const ticketId = e.currentTarget.getAttribute('data-id');
+const ticketIndex = salesHistory.findIndex(t => t.id === ticketId);
+
+if (ticketIndex !== -1) {
+if (confirm('¿Está seguro de que desea eliminar este ticket? Esta acción no se puede deshacer.')) {
+// Mark ticket as deleted instead of removing it
+salesHistory[ticketIndex].deleted = true;
+deletedTickets.push(salesHistory[ticketIndex]);
+saveSalesHistory();
+saveDeletedTickets();
+renderHistory();
+updateStats();
+
+showToast('Ticket eliminado correctamente.', 'success');
+}
+}
+});
+});
+}
+
+function applyFilters() {
+renderHistory();
+showToast('Filtros aplicados.', 'info');
+}
+
+function exportHistory() {
+if (salesHistory.length === 0) {
+showToast('No hay datos para exportar.', 'warning');
+return;
+}
+
+// Create CSV content
+let csvContent = "Ticket ID,Fecha,Hora,Número,Lotería,Valor,Total,Estado,Vendedor\n";
+
+salesHistory.forEach(ticket => {
+const formattedDate = formatDate(ticket.date);
+const formattedTime = formatTime(ticket.date);
+const status = ticket.deleted ? 'Eliminado' : 'Activo';
+const seller = ticket.user || 'Banca01';
+
+ticket.entries.forEach(entry => {
+csvContent += `${ticket.id},${formattedDate},${formattedTime},${entry.numero},"${entry.loteria}",${entry.valor},${ticket.total},${status},${seller}\n`;
+});
+});
+
+// Create blob and download
+const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+const url = URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.setAttribute('href', url);
+link.setAttribute('download', `historial_ventas_${formatDateForInput(new Date())}.csv`);
+link.style.visibility = 'hidden';
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+
+showToast('Historial exportado correctamente.', 'success');
+}
+
+function calculateBalance() {
+const startDate = new Date(elements.balanceStartDate.value);
+const endDate = new Date(elements.balanceEndDate.value);
+
+if (isNaN(startDate) || isNaN(endDate)) {
+showToast('Por favor seleccione fechas válidas.', 'warning');
+return;
+}
+
+if (startDate > endDate) {
+showToast('La fecha de inicio no puede ser posterior a la fecha de fin.', 'warning');
+return;
+}
+
+// Filter tickets by date range
+const filteredTickets = salesHistory.filter(ticket => {
+const ticketDate = new Date(ticket.date);
+return ticketDate >= startDate && ticketDate <= endDate;
+});
+
+// Filter deleted tickets by date range
+const filteredDeletedTickets = deletedTickets.filter(ticket => {
+const ticketDate = new Date(ticket.date);
+return ticketDate >= startDate && ticketDate <= endDate;
+});
+
+// Group tickets by date
+const ticketsByDate = {};
+const deletedTicketsByDate = {};
+
+filteredTickets.forEach(ticket => {
+// Use localDate if available, otherwise extract from date
+const dateStr = ticket.localDate || ticket.date.split('T')[0];
+
+if (!ticketsByDate[dateStr]) {
+ticketsByDate[dateStr] = {
+total: 0,
+count: 0
+};
+}
+
+ticketsByDate[dateStr].total += ticket.total;
+ticketsByDate[dateStr].count++;
+});
+
+filteredDeletedTickets.forEach(ticket => {
+// Use localDate if available, otherwise extract from date
+const dateStr = ticket.localDate || ticket.date.split('T')[0];
+
+if (!deletedTicketsByDate[dateStr]) {
+deletedTicketsByDate[dateStr] = {
+count: 0
+};
+}
+
+deletedTicketsByDate[dateStr].count++;
+});
+
+// Calculate totals
+let totalSales = 0;
+let totalTickets = 0;
+let totalDeleted = 0;
+
+Object.values(ticketsByDate).forEach(day => {
+totalSales += day.total;
+totalTickets += day.count;
+});
+
+Object.values(deletedTicketsByDate).forEach(day => {
+totalDeleted += day.count;
+});
+
+// Update UI
+elements.balanceTotal.textContent = `$${formatCurrency(totalSales)}`;
+elements.balanceTickets.textContent = totalTickets;
+elements.balanceDeleted.textContent = totalDeleted;
+
+// Render table
+elements.balanceTable.innerHTML = '';
+
+// Get all dates in range
+const allDates = [];
+for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+allDates.push(formatDateForInput(new Date(d)));
+}
+
+allDates.forEach(dateStr => {
+const day = ticketsByDate[dateStr] || { total: 0, count: 0 };
+const deletedDay = deletedTicketsByDate[dateStr] || { count: 0 };
+
+const row = document.createElement('tr');
+row.innerHTML = `
+<td>${formatDate(dateStr)}</td>
+<td>$${formatCurrency(day.total)}</td>
+<td>${day.count}</td>
+<td>${deletedDay.count}</td>
+`;
+
+elements.balanceTable.appendChild(row);
+});
+
+if (allDates.length === 0) {
+elements.balanceTable.innerHTML = '<tr><td colspan="4" class="text-center">No hay ventas en el período seleccionado.</td></tr>';
+}
+
+showToast('Cuadre calculado correctamente.', 'success');
+}
+
+function exportBalance() {
+const startDate = new Date(elements.balanceStartDate.value);
+const endDate = new Date(elements.balanceEndDate.value);
+
+if (isNaN(startDate) || isNaN(endDate)) {
+showToast('Por favor seleccione fechas válidas.', 'warning');
+return;
+}
+
+// Filter tickets by date range
+const filteredTickets = salesHistory.filter(ticket => {
+const ticketDate = new Date(ticket.date);
+return ticketDate >= startDate && ticketDate <= endDate;
+});
+
+// Filter deleted tickets by date range
+const filteredDeletedTickets = deletedTickets.filter(ticket => {
+const ticketDate = new Date(ticket.date);
+return ticketDate >= startDate && ticketDate <= endDate;
+});
+
+if (filteredTickets.length === 0 && filteredDeletedTickets.length === 0) {
+showToast('No hay datos para exportar en el período seleccionado.', 'warning');
+return;
+}
+
+// Group tickets by date
+const ticketsByDate = {};
+const deletedTicketsByDate = {};
+
+filteredTickets.forEach(ticket => {
+// Use localDate if available, otherwise extract from date
+const dateStr = ticket.localDate || ticket.date.split('T')[0];
+
+if (!ticketsByDate[dateStr]) {
+ticketsByDate[dateStr] = {
+total: 0,
+count: 0
+};
+}
+
+ticketsByDate[dateStr].total += ticket.total;
+ticketsByDate[dateStr].count++;
+});
+
+filteredDeletedTickets.forEach(ticket => {
+// Use localDate if available, otherwise extract from date
+const dateStr = ticket.localDate || ticket.date.split('T')[0];
+
+if (!deletedTicketsByDate[dateStr]) {
+deletedTicketsByDate[dateStr] = {
+count: 0
+};
+}
+
+deletedTicketsByDate[dateStr].count++;
+});
+
+// Create CSV content
+let csvContent = "Fecha,Ventas,Tickets,Tickets Eliminados\n";
+
+// Get all dates in range
+const allDates = [];
+for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+allDates.push(formatDateForInput(new Date(d)));
+}
+
+allDates.forEach(dateStr => {
+const day = ticketsByDate[dateStr] || { total: 0, count: 0 };
+const deletedDay = deletedTicketsByDate[dateStr] || { count: 0 };
+
+csvContent += `${formatDate(dateStr)},${day.total},${day.count},${deletedDay.count}\n`;
+});
+
+// Create blob and download
+const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+const url = URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.setAttribute('href', url);
+link.setAttribute('download', `cuadre_ventas_${formatDateForInput(elements.balanceStartDate.value)}_a_${formatDateForInput(elements.balanceEndDate.value)}.csv`);
+link.style.visibility = 'hidden';
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+
+showToast('Cuadre exportado correctamente.', 'success');
+}
+
+function generateStats() {
+const period = elements.statsPeriod.value;
+let startDate, endDate;
+
+switch (period) {
+case 'today':
+startDate = new Date();
+endDate = new Date();
+break;
+case 'week':
+startDate = new Date();
+startDate.setDate(startDate.getDate() - startDate.getDay());
+endDate = new Date();
+break;
+case 'month':
+startDate = new Date();
+startDate.setDate(1);
+endDate = new Date();
+break;
+case 'year':
+startDate = new Date();
+startDate.setMonth(0, 1);
+endDate = new Date();
+break;
+case 'custom':
+startDate = new Date(elements.statsCustomDate.value);
+endDate = new Date(elements.statsCustomDate.value);
+break;
+default:
+startDate = new Date();
+endDate = new Date();
+}
+
+if (isNaN(startDate) || isNaN(endDate)) {
+showToast('Por favor seleccione una fecha válida.', 'warning');
+return;
+}
+
+// Filter tickets by date range
+const filteredTickets = salesHistory.filter(ticket => {
+const ticketDate = new Date(ticket.date);
+return ticketDate >= startDate && ticketDate <= endDate && !ticket.deleted;
+});
+
+// Calculate statistics
+const numberStats = {};
+const loteriaStats = {};
+
+filteredTickets.forEach(ticket => {
+ticket.entries.forEach(entry => {
+// Count numbers
+if (!numberStats[entry.numero]) {
+numberStats[entry.numero] = {
+count: 0,
+total: 0
+};
+}
+numberStats[entry.numero].count++;
+numberStats[entry.numero].total += entry.valor;
+
+// Count lotteries
+if (!loteriaStats[entry.loteria]) {
+loteriaStats[entry.loteria] = {
+count: 0,
+total: 0
+};
+}
+loteriaStats[entry.loteria].count++;
+loteriaStats[entry.loteria].total += entry.valor;
+});
+});
+
+// Sort and get top numbers
+const topNumbers = Object.entries(numberStats)
+.sort((a, b) => b[1].total - a[1].total)
+.slice(0, 5);
+
+// Sort and get top lotteries
+const topLoterias = Object.entries(loteriaStats)
+.sort((a, b) => b[1].total - a[1].total)
+.slice(0, 5);
+
+// Render top numbers
+elements.topNumbers.innerHTML = '';
+topNumbers.forEach(([number, stats]) => {
+const item = document.createElement('div');
+item.className = 'd-flex justify-content-between align-items-center mb-2';
+item.innerHTML = `
+<span>${number}</span>
+<span>$${formatCurrency(stats.total)} (${stats.count} veces)</span>
+`;
+elements.topNumbers.appendChild(item);
+});
+
+// Render top loterias
+elements.topLoterias.innerHTML = '';
+topLoterias.forEach(([loteria, stats]) => {
+const item = document.createElement('div');
+item.className = 'd-flex justify-content-between align-items-center mb-2';
+item.innerHTML = `
+<span>${loteria}</span>
+<span>$${formatCurrency(stats.total)} (${stats.count} veces)</span>
+`;
+elements.topLoterias.appendChild(item);
+});
+
+// Generate sales chart
+generateSalesChart(filteredTickets, startDate, endDate);
+
+showToast('Estadísticas generadas correctamente.', 'success');
+}
+
+function generateSalesChart(tickets, startDate, endDate) {
+// Group tickets by day
+const salesByDay = {};
+const dayCount = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+// Initialize all days with 0
+for (let i = 0; i < dayCount; i++) {
+const date = new Date(startDate);
+date.setDate(startDate.getDate() + i);
+const dateStr = formatDateForInput(date);
+salesByDay[dateStr] = 0;
+}
+
+// Sum sales by day
+tickets.forEach(ticket => {
+// Use localDate if available, otherwise extract from date
+const dateStr = ticket.localDate || ticket.date.split('T')[0];
+if (salesByDay[dateStr] !== undefined) {
+salesByDay[dateStr] += ticket.total;
+}
+});
+
+// Prepare data for chart
+const labels = Object.keys(salesByDay).map(date => formatDate(date));
+const data = Object.values(salesByDay);
+
+// Destroy existing chart if it exists
+if (salesChart) {
+salesChart.destroy();
+}
+
+// Create new chart
+const ctx = elements.salesChart.getContext('2d');
+salesChart = new Chart(ctx, {
+type: 'line',
+data: {
+labels: labels,
+datasets: [{
+label: 'Ventas',
+data: data,
+backgroundColor: 'rgba(0, 123, 255, 0.2)',
+borderColor: 'rgba(0, 123, 255, 1)',
+borderWidth: 2,
+tension: 0.4,
+fill: true
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+scales: {
+y: {
+beginAtZero: true,
+ticks: {
+callback: function(value) {
+return '$' + formatCurrency(value);
+}
+}
+}
+},
+plugins: {
+tooltip: {
+callbacks: {
+label: function(context) {
+return 'Ventas: $' + formatCurrency(context.raw);
+}
+}
+}
+}
+}
+});
+}
+
+function updateStats() {
+// Get today's date
+const today = new Date();
+const todayString = formatDateForInput(today);
+
+// Get week start (Sunday)
+const weekStart = new Date(today);
+weekStart.setDate(today.getDate() - today.getDay());
+const weekStartString = formatDateForInput(weekStart);
+
+// Get month start
+const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+const monthStartString = formatDateForInput(monthStart);
+
+// Calculate stats
+let todaySales = 0;
+let todayTickets = 0;
+let weekSales = 0;
+let monthSales = 0;
+
+salesHistory.forEach(ticket => {
+// Use localDate if available, otherwise extract from date
+const ticketDate = ticket.localDate || ticket.date.split('T')[0];
+
+if (ticketDate === todayString && !ticket.deleted) {
+todaySales += ticket.total;
+todayTickets++;
+}
+
+if (ticketDate >= weekStartString && !ticket.deleted) {
+weekSales += ticket.total;
+}
+
+if (ticketDate >= monthStartString && !ticket.deleted) {
+monthSales += ticket.total;
+}
+});
+
+// Update UI
+elements.todaySales.textContent = `$${formatCurrency(todaySales)}`;
+elements.todayTickets.textContent = todayTickets;
+elements.weekSales.textContent = `$${formatCurrency(weekSales)}`;
+elements.monthSales.textContent = `$${formatCurrency(monthSales)}`;
+
+// Update progress bars (assuming targets)
+const todayTarget = 1000; // Example target
+const weekTarget = 5000; // Example target
+const monthTarget = 20000; // Example target
+
+document.getElementById('todaySalesProgress').style.width = `${Math.min(100, (todaySales / todayTarget) * 100)}%`;
+document.getElementById('todayTicketsProgress').style.width = `${Math.min(100, (todayTickets / 50) * 100)}%`; // Assuming 50 tickets target
+document.getElementById('weekSalesProgress').style.width = `${Math.min(100, (weekSales / weekTarget) * 100)}%`;
+document.getElementById('monthSalesProgress').style.width = `${Math.min(100, (monthSales / monthTarget) * 100)}%`;
+}
+
+function loadSettings() {
+// Load from localStorage
+const savedSettings = localStorage.getItem('lotterySettings');
+
+if (savedSettings) {
+settings = { ...settings, ...JSON.parse(savedSettings) };
+}
+
+// Update UI
+elements.shopName.value = settings.shopName;
+elements.shopAddress.value = settings.shopAddress;
+elements.shopPhone.value = settings.shopPhone;
+elements.shopRnc.value = settings.shopRNC;
+elements.defaultValue.value = settings.defaultValue;
+elements.printerType.value = settings.printerType;
+elements.autoPrint.checked = settings.autoPrint;
+elements.soundNotifications.checked = settings.soundNotifications;
+elements.maxBetAmount.value = settings.maxBetAmount;
+elements.maxPaleAmount.value = settings.maxPaleAmount;
+elements.darkMode.checked = settings.darkMode;
+elements.enableKeypad.checked = settings.enableKeypad;
+elements.autoBackup.checked = settings.autoBackup;
+elements.enableNotifications.checked = settings.enableNotifications;
+elements.ticketFontSize.value = settings.ticketFontSize;
+elements.ticketFormat.value = settings.ticketFormat;
+elements.autoSyncGoogleSheets.checked = settings.autoSyncGoogleSheets;
+elements.syncInterval.value = settings.syncInterval;
+elements.syncOnSave.value = settings.syncOnSave;
+soundEnabled = settings.soundNotifications;
+keypadEnabled = settings.enableKeypad;
+
+// Apply theme
+if (settings.darkMode) {
+document.documentElement.setAttribute('data-theme', 'dark');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+} else {
+document.documentElement.removeAttribute('data-theme');
+elements.themeToggleBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
+}
+
+// Apply keypad visibility
+const keypadContainer = document.getElementById('quickNumbers').parentElement;
+if (keypadEnabled) {
+keypadContainer.style.display = 'block';
+} else {
+keypadContainer.style.display = 'none';
+}
+}
+
+function saveSettings() {
+// Update settings object
+settings.shopName = elements.shopName.value;
+settings.shopAddress = elements.shopAddress.value;
+settings.shopPhone = elements.shopPhone.value;
+settings.shopRNC = elements.shopRnc.value;
+settings.defaultValue = parseFloat(elements.defaultValue.value);
+settings.printerType = elements.printerType.value;
+settings.autoPrint = elements.autoPrint.checked;
+settings.soundNotifications = elements.soundNotifications.checked;
+settings.maxBetAmount = parseFloat(elements.maxBetAmount.value);
+settings.maxPaleAmount = parseFloat(elements.maxPaleAmount.value);
+settings.darkMode = elements.darkMode.checked;
+settings.enableKeypad = elements.enableKeypad.checked;
+settings.autoBackup = elements.autoBackup.checked;
+settings.enableNotifications = elements.enableNotifications.checked;
+settings.ticketFontSize = parseInt(elements.ticketFontSize.value);
+settings.ticketFormat = elements.ticketFormat.value;
+settings.autoSyncGoogleSheets = elements.autoSyncGoogleSheets.checked;
+settings.syncInterval = parseInt(elements.syncInterval.value);
+settings.syncOnSave = elements.syncOnSave.value;
+
+// Save to localStorage
+localStorage.setItem('lotterySettings', JSON.stringify(settings));
+
+showToast('Configuración guardada correctamente.', 'success');
+}
+
+function resetSettings() {
+if (confirm('¿Está seguro de que desea restablecer la configuración a los valores predeterminados?')) {
+// Reset to defaults
+settings = {
+shopName: 'Mi Lotería',
+shopAddress: 'Calle Principal #123',
+shopPhone: '(809) 123-4567',
+shopRNC: '123456789',
+defaultValue: 1,
+printerType: 'thermal',
+autoPrint: true,
+soundNotifications: true,
+maxBetAmount: 30,
+maxPaleAmount: 30,
+darkMode: false,
+enableKeypad: true,
+autoBackup: true,
+enableNotifications: true,
+ticketFontSize: 30,
+ticketFormat: 'abbreviated',
+autoSyncGoogleSheets: true,
+syncInterval: 15,
+syncOnSave: 'immediately'
+};
+
+// Reset lottery abbreviations and closing times
+lotteryAbbreviations = { ...DEFAULT_ABBREVIATIONS };
+lotteryClosingTimes = { ...DEFAULT_CLOSING_TIMES };
+
+// Update UI
+loadSettings();
+renderLotteryConfigTable();
+saveLotteryConfig();
+
+showToast('Configuración restablecida a los valores predeterminados.', 'info');
+}
+}
+
+function clearAllData() {
+if (confirm('¿Está seguro de que desea eliminar todos los datos? Esta acción no se puede deshacer.')) {
+// Clear all data
+localStorage.removeItem('salesHistory');
+localStorage.removeItem('deletedTickets');
+localStorage.removeItem('numberLimits');
+localStorage.removeItem('paleLimits');
+localStorage.removeItem('favorites');
+localStorage.removeItem('ticketDraft');
+localStorage.removeItem('lotteryAbbreviations');
+localStorage.removeItem('lotteryClosingTimes');
+localStorage.removeItem('lastResetDate');
+
+// Reset state
+salesHistory = [];
+deletedTickets = [];
+numberLimits = {};
+paleLimits = {};
+favorites = [];
+currentEntries = [];
+selectedLoterias = [];
+lotteryAbbreviations = { ...DEFAULT_ABBREVIATIONS };
+lotteryClosingTimes = { ...DEFAULT_CLOSING_TIMES };
+lastResetDate = null;
+
+// Update UI
+renderEntries();
+renderHistory();
+renderFavorites();
+updateStats();
+updateSelectedLoterias();
+renderLotteryConfigTable();
+
+showToast('Todos los datos han sido eliminados.', 'success');
+}
+}
+
+// Utility Functions
+function formatCurrency(value) {
+return Number(value).toLocaleString(undefined, {
+minimumFractionDigits: 2,
+maximumFractionDigits: 2
+});
+}
+
+function generateTicketId() {
+const now = new Date();
+const year = now.getFullYear().toString().slice(-2);
+const month = (now.getMonth() + 1).toString().padStart(2, '0');
+const day = now.getDate().toString().padStart(2, '0');
+const hours = now.getHours().toString().padStart(2, '0');
+const minutes = now.getMinutes().toString().padStart(2, '0');
+const seconds = now.getSeconds().toString().padStart(2, '0');
+const random = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+
+return `${year}${month}${day}${hours}${minutes}${seconds}${random}`;
+}
+
+function showToast(message, type = 'info') {
+const toastContainer = document.querySelector('.toast-container');
+
+const toast = document.createElement('div');
+toast.className = `toast align-items-center text-white bg-${type} border-0`;
+toast.setAttribute('role', 'alert');
+toast.setAttribute('aria-live', 'assertive');
+toast.setAttribute('aria-atomic', 'true');
+
+toast.innerHTML = `
+<div class="d-flex">
+<div class="toast-body">
+ ${message}
+</div>
+<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+</div>
+`;
+
+toastContainer.appendChild(toast);
+
+const bsToast = new bootstrap.Toast(toast);
+bsToast.show();
+
+// Remove toast after it's hidden
+toast.addEventListener('hidden.bs.toast', () => {
+toast.remove();
+});
+}
+
+function playSound(type) {
+if (!soundEnabled) return;
+
+// Create audio context
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+// Create oscillator
+const oscillator = audioContext.createOscillator();
+const gainNode = audioContext.createGain();
+
+// Connect nodes
+oscillator.connect(gainNode);
+gainNode.connect(audioContext.destination);
+
+// Set sound based on type
+switch (type) {
+case 'add':
+oscillator.frequency.value = 800;
+gainNode.gain.value = 0.1;
+oscillator.start();
+oscillator.stop(audioContext.currentTime + 0.1);
+break;
+case 'delete':
+oscillator.frequency.value = 400;
+gainNode.gain.value = 0.1;
+oscillator.start();
+oscillator.stop(audioContext.currentTime + 0.1);
+break;
+case 'clear':
+oscillator.frequency.value = 300;
+gainNode.gain.value = 0.1;
+oscillator.start();
+oscillator.stop(audioContext.currentTime + 0.2);
+break;
+case 'success':
+oscillator.frequency.value = 1000;
+gainNode.gain.value = 0.1;
+oscillator.start();
+oscillator.stop(audioContext.currentTime + 0.3);
+break;
+}
+}
+</script>
+</body>
+</html>
